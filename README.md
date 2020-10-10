@@ -26,3 +26,14 @@ I've been running into the issue recently where I'm staring at a login screen an
 be. Sure, Google saves some of my passwords, but there are still a bunch that are only stored at the back of my brain.
 With many things moving online, I also have to create new passwords for things and I'm running out of ideas. An app like
 this fixes both of these problems!
+
+
+### User Stories:
+- As a user, I want to be able to generate a strong password
+- As a user, I want to have the option to save the generated password under a name to my collection of passwords
+- As a user, I want to be able to view the list of all the names of my stored passwords
+- As a user, I want to be able to be able to select a name of a password and see the password plus related info
+- As a user, I want to be able to add and update the info for my password like the username, url, or even the password
+- As a user, I want to be able to delete a stored password
+- As a user, I want to check the strength of a password I type in
+ 
