@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: Generex
+Implementation-Version: 1.0.2
+Implementation-Vendor-Id: com.github.mifmif
+Built-By: Pro
+Build-Jdk: 1.7.0_71
+Specification-Title: Generex
+Created-By: Apache Maven 3.2.1
+Implementation-URL: https://github.com/mifmif/Generex/tree/master
+Specification-Version: 1.0
+
