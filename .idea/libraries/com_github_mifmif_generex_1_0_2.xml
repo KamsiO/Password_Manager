@@ -2,12 +2,10 @@
   <library name="com.github.mifmif:generex:1.0.2" type="repository">
     <properties maven-id="com.github.mifmif:generex:1.0.2" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/mifmif/generex/1.0.2/generex-1.0.2.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/dk/brics/automaton/automaton/1.11-8/automaton-1.11-8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/generex-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/automaton-1.11-8.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$USER_HOME$/.ideaLibSources/generex-1.0.2-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
