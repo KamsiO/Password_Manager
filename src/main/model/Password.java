@@ -10,9 +10,11 @@ import java.util.regex.Pattern;
  * one of each: a lowercase, uppercase, digit, and special character. The password can be generated, or manually set.
  */
 
-
 public class Password {
+    public static final int MIN_PASSWORD_LENGTH = 8;
+    public static final int MAX_PASSWORD_LENGTH = 12;
     private String pw;
+    private String strengthRating;
     private Boolean length;
     private Boolean hasLowercase;
     private Boolean hasUppercase;
@@ -30,43 +32,46 @@ public class Password {
     }
 
     // MODIFIES: this
-    // EFFECTS: generates and sets password to a string that is 8-12 characters long and has all the requirements of
-    //              a strong password
+    // EFFECTS: generates and sets password to a string that is MIN_PASSWORD_LENGTH - MAX_PASSWORD_LENGTH characters
+                // long and has all the requirements of a strong password
     public void generateStrongPassword() {
-        Generex genrex = new Generex("[0-9]+[A-Z]+[a-z]+[!\"#$%&'()*+,-./:;=?@^_{}~]{1,3}");
-        String stringFromRegex = genrex.random(8,12); // creates a string of length between 8-12 made up of characters
-                                                        // from genrex regular expression
+        Generex generex = new Generex("[0-9]+[A-Z]+[a-z]+[!\"#$%&'()*+,-./:;=?@^_{}~]{1,3}");
+        String stringFromRegex = generex.random(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH); // creates a string of length
+            // between MIN_PASSWORD_LENGTH - MAX_PASSWORD_LENGTH made up of characters from generex regular expression
         List<String> characters = Arrays.asList(stringFromRegex.split("")); // splits string into chars and adds
-                                                                                    // them to list
+                                                                            // them to list
         StringBuilder password = new StringBuilder();
         Collections.shuffle(characters);
         for (String character : characters) {
             password.append(character);
         }
         pw = password.toString();
+        checkPasswordStrength();
     }
 
     // MODIFIES: this
     // EFFECTS: checks if p is long enough, has a lowercase character, has an uppercase character, has a digit, and
     //              has a special char
-    public void checkPasswordStrength() { //https://www.tutorialspoint.com/java/java_regular_expressions.htm
+    private void checkPasswordStrength() { //https://www.tutorialspoint.com/java/java_regular_expressions.htm
         Pattern capital = Pattern.compile("[A-Z]");
         Pattern lowercase = Pattern.compile("[a-z]");
         Pattern digit = Pattern.compile("[0-9]");
         Pattern specialChar = Pattern.compile("[!\"#$%&'()*+,-./:;=?@^_{}~]");
 
-        length = pw.length() >= 8;
+        length = pw.length() >= MIN_PASSWORD_LENGTH;
         hasUppercase = capital.matcher(pw).find();
         hasLowercase = lowercase.matcher(pw).find();
         hasDigit = digit.matcher(pw).find();
         hasSpecialChar = specialChar.matcher(pw).find();
+
+        setPasswordStrengthRating();
     }
 
     // MODIFIES: this
     // EFFECTS: sets password to given string, and updates password strength for new password
     public void setPassword(String s) {
         pw = s;
-        this.checkPasswordStrength();
+        checkPasswordStrength();
     }
 
     // EFFECTS: returns password
@@ -84,5 +89,39 @@ public class Password {
         strength.add(this.hasDigit);
         strength.add(this.hasSpecialChar);
         return strength;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets the strength rating of the password based on how many requirements it meets
+    private void setPasswordStrengthRating() {
+        int rating = 0;
+        if (length) {
+            rating++;
+        }
+        if (hasLowercase) {
+            rating++;
+        }
+        if (hasUppercase) {
+            rating++;
+        }
+        if (hasDigit) {
+            rating++;
+        }
+        if (hasSpecialChar) {
+            rating++;
+        }
+
+        if (rating == 5) {
+            strengthRating = "Strong";
+        } else if (rating < 3) {
+            strengthRating = "Poor";
+        } else {
+            strengthRating = "Medium";
+        }
+    }
+
+    // EFFECTS: returns password's strength rating
+    public String getPasswordStrengthRating() {
+        return strengthRating;
     }
 }

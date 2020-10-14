@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public class PasswordManager {
-    LinkedList<PasswordLog> pm;
+    private LinkedList<PasswordLog> pm;
 
     // EFFECTS: makes an empty password manager
     public PasswordManager() {

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static model.Password.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PasswordTest {
@@ -31,7 +32,8 @@ class PasswordTest {
         assertTrue(digit.matcher(generated).find());
         assertTrue(specialChar.matcher(generated).find());
 
-        assertTrue(pw.getPassword().length() >= 8 && pw.getPassword().length() <= 12);
+        assertTrue(pw.getPassword().length() >= MIN_PASSWORD_LENGTH &&
+                pw.getPassword().length() <= MAX_PASSWORD_LENGTH);
     }
 
     @Test
@@ -47,7 +49,7 @@ class PasswordTest {
     }
 
     @Test
-    public void testPasswordStrengthTooShort() {
+    public void testCheckPasswordStrengthTooShort() {
         pw.setPassword("1We@abc");
         List<Boolean> strength = pw.getPasswordStrength();
 
@@ -59,7 +61,7 @@ class PasswordTest {
     }
 
     @Test
-    public void testPasswordStrengthNoCapital() {
+    public void testCheckPasswordStrengthNoCapital() {
         pw.setPassword("1we(abcd34567");
         List<Boolean> strength = pw.getPasswordStrength();
 
@@ -71,7 +73,7 @@ class PasswordTest {
     }
 
     @Test
-    public void testPasswordStrengthNoLowercase() {
+    public void testCheckPasswordStrengthNoLowercase() {
         pw.setPassword("1WE*ABCD23");
         List<Boolean> strength = pw.getPasswordStrength();
 
@@ -84,7 +86,7 @@ class PasswordTest {
     }
 
     @Test
-    public void testPasswordStrengthNoDigit() {
+    public void testCheckPasswordStrengthNoDigit() {
         pw.setPassword("We~abcdt");
         List<Boolean> strength = pw.getPasswordStrength();
 
@@ -96,7 +98,7 @@ class PasswordTest {
     }
 
     @Test
-    public void testPasswordStrengthNoSpecialChar() {
+    public void testCheckPasswordStrengthNoSpecialChar() {
         pw.setPassword("1We4abcd");
         List<Boolean> strength = pw.getPasswordStrength();
 
@@ -105,5 +107,23 @@ class PasswordTest {
         assertTrue(strength.get(2)); //uppercase
         assertTrue(strength.get(3)); //digit
         assertFalse(strength.get(4)); //special char
+    }
+
+    @Test
+    public void testSetPasswordStrengthRatingPoor() {
+        pw.setPassword("password");
+        assertEquals("Poor", pw.getPasswordStrengthRating());
+    }
+
+    @Test
+    public void testSetPasswordStrengthRatingMedium() {
+        pw.setPassword("Password");
+        assertEquals("Medium", pw.getPasswordStrengthRating());
+    }
+
+    @Test
+    public void testSetPasswordStrengthRatingStrong() {
+        pw.setPassword("Password123!");
+        assertEquals("Strong", pw.getPasswordStrengthRating());
     }
 }
