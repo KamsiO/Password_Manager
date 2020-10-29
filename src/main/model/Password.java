@@ -31,13 +31,18 @@ public class Password {
         hasSpecialChar = false;
     }
 
+    // EFFECTS: creates a password from inputted string with strength depending on features of inputted string
+    public Password(String pw) {
+        setPassword(pw);
+    }
+
     // MODIFIES: this
     // EFFECTS: generates and sets password to a string that is MIN_PASSWORD_LENGTH - MAX_PASSWORD_LENGTH characters
                 // long and has all the requirements of a strong password
     public void generateStrongPassword() {
         Generex generex = new Generex("[0-9]+[A-Z]+[a-z]+[!\"#$%&'()*+,-./:;=?@^_{}~]{1,3}");
         String stringFromRegex = generex.random(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH); // creates a string of length
-            // between MIN_PASSWORD_LENGTH - MAX_PASSWORD_LENGTH made up of characters from generex regular expression
+            // between MIN_PASSWORD_LENGTH and MAX_PASSWORD_LENGTH made up of characters from generex regular expression
         List<String> characters = Arrays.asList(stringFromRegex.split("")); // splits string into chars and adds
                                                                             // them to list
         StringBuilder password = new StringBuilder();

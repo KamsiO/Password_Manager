@@ -15,6 +15,17 @@ public class PasswordLogTest {
     }
 
     @Test
+    public void testOverloadedConstructor() {
+        Password pw = new Password();
+        PasswordLog log = new PasswordLog(pw, "UBC", "kamsi", "ubc.ca", "mom's birthday");
+        assertEquals(pw, log.getPassword());
+        assertEquals("UBC", log.getTitle());
+        assertEquals("ubc.ca", log.getURL());
+        assertEquals("kamsi", log.getUsername());
+        assertEquals("mom's birthday", log.getNotes());
+    }
+
+    @Test
     public void testSetNotes(){
         pl.setNotes("Security q is my b-day");
         String notes = pl.getNotes();

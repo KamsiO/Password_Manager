@@ -29,15 +29,19 @@ this fixes both of these problems!
 
 
 ### User Stories:
-#### The Main 4:
+#### Phase 1
+##### The Main 4:
 - As a user, I want to be able to generate a strong password
 - As a user, I want to have the option to save a generated or typed in password under a name to my collection of passwords
 - As a user, I want to be able to view the list of all the names of my stored passwords sorted by most recent or 
 alphabetically
 - As a user, I want to check the strength of a password I type in
-#### Additional:
+##### Additional:
 - As a user, I want to be able to select a name of a password and see the password plus related info
 - As a user, I want to be able to add and update the info for my password like the username, url, or even the password
 - As a user, I want to be able to delete a stored password
 
+#### Phase 2
+- As a user, I want the application to automatically save any changes I make to my saved passwords
+- As a user, if I have any saved passwords, I want to see them immediately when the application starts
  

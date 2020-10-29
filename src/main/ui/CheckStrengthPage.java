@@ -12,14 +12,13 @@ import static ui.PasswordApp.stringInput;
  */
 
 public class CheckStrengthPage {
-    // MODIFIES: Password
+    // MODIFIES: Password, PasswordApp, PasswordManager
     // EFFECTS: shows the strength attributes of the password that user inputs
     public static void checkPasswordStrength() {
         System.out.println("\nPASSWORD STRENGTH CHECKER");
         System.out.println("Please type in the password you would like to check.");
         String inputtedPassword = stringInput.next();
-        Password password = new Password();
-        password.setPassword(inputtedPassword);
+        Password password = new Password(inputtedPassword);
         String rating = password.getPasswordStrengthRating();
         List<Boolean> requirements = password.getPasswordStrength();
         System.out.println("\nThe strength of \"" + inputtedPassword + "\" is: " + rating);

@@ -18,6 +18,13 @@ class PasswordTest {
     }
 
     @Test
+    public void testOverloadedConstructor() {
+        Password password = new Password("password123");
+        assertEquals("password123", password.getPassword());
+        assertEquals("Medium", password.getPasswordStrengthRating());
+    }
+
+    @Test
     public void testGenerateStrongPassword() {
         Pattern capital = Pattern.compile("[A-Z]");
         Pattern lowercase = Pattern.compile("[a-z]");

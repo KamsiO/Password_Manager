@@ -21,6 +21,15 @@ public class PasswordLog {
         notes = "";
     }
 
+    // EFFECTS: makes a password log with the given title, password, and related info
+    public PasswordLog(Password pw, String title, String user, String url, String notes) {
+        this.title = title;
+        password = pw;
+        this.url = url;
+        username = user;
+        this.notes = notes;
+    }
+
     // MODIFIES: this
     // EFFECTS: changes the notes to n
     public void setNotes(String n) {

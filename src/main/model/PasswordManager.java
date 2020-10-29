@@ -12,11 +12,11 @@ import java.util.List;
  */
 
 public class PasswordManager {
-    private LinkedList<PasswordLog> pm;
+    private List<PasswordLog> pm;
 
     // EFFECTS: makes an empty password manager
     public PasswordManager() {
-        pm = new LinkedList<>();
+        pm = new ArrayList<>();
     }
 
     // MODIFIES: this
@@ -29,7 +29,7 @@ public class PasswordManager {
             }
         }
         PasswordLog pl = new PasswordLog(pw, title);
-        pm.addFirst(pl);
+        pm.add(0, pl);
         return true;
     }
 

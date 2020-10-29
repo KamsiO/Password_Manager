@@ -14,6 +14,7 @@ public class PasswordApp { // ui inspired from TellerApp
     public static Scanner commandInput;
     public static Scanner stringInput;
 
+    // MODIFIES: this
     // EFFECTS: creates scanners to monitor user input and starts the Password app
     public PasswordApp() {
         commandInput = new Scanner(System.in);
@@ -42,7 +43,7 @@ public class PasswordApp { // ui inspired from TellerApp
         System.out.println("\nGoodbye!");
     }
 
-    // MODIFIES: this, PasswordManager
+    // MODIFIES: this
     // EFFECTS: creates a password manager
     private void init() {
         System.out.println("\nHello!");
