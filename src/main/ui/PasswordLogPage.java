@@ -87,6 +87,7 @@ public class PasswordLogPage {
             } else if (s.equals("notes")) {
                 pl.setNotes(newInfo);
             }
+            passwordManager.updateLogInJson(pl, s, newInfo);
         }
         System.out.println("Password log successfully updated!");
         viewPasswordLog(pl);
@@ -104,6 +105,7 @@ public class PasswordLogPage {
                         + newTitle + "\" already exists. Please input another name.");
             } else {
                 pl.updateTitle(newTitle);
+                PasswordApp.savePasswordManager("update", pl, "title", newTitle);
                 updatingTitle = false;
             }
         }
@@ -120,20 +122,30 @@ public class PasswordLogPage {
             System.out.println("\t2 -> type in a password?");
             String answer = commandInput.next();
             if (answer.equals("1")) {
-                newPassword.generateStrongPassword();
-                pl.updatePassword(newPassword);
+                updatePasswordGenerated(newPassword, pl);
                 choosing = false;
                 viewPasswordLog(pl);
             } else if (answer.equals("2")) {
-                System.out.println("Please type in the password you would like to save.");
-                String pw = stringInput.next();
-                newPassword.setPassword(pw);
-                pl.updatePassword(newPassword);
+                updatePasswordInputted(newPassword, pl);
                 choosing = false;
                 viewPasswordLog(pl);
             } else {
                 System.out.println("Please select 1 or 2.");
             }
         }
+    }
+
+    private static void updatePasswordGenerated(Password newPassword, PasswordLog pl) {
+        newPassword.generateStrongPassword();
+        pl.updatePassword(newPassword);
+        PasswordApp.savePasswordManager("update", pl, "title", newPassword.getPassword());
+    }
+
+    private static void updatePasswordInputted(Password newPassword, PasswordLog pl) {
+        System.out.println("Please type in the password you would like to save.");
+        String pw = stringInput.next();
+        newPassword.setPassword(pw);
+        pl.updatePassword(newPassword);
+        PasswordApp.savePasswordManager("update", pl, "password", pw);
     }
 }

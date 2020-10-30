@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,12 +14,14 @@ import java.util.List;
  * alphabetical order.
  */
 
-public class PasswordManager {
+public class PasswordManager implements Writable {
     private List<PasswordLog> passwordLogs;
+    private JSONObject json;
 
     // EFFECTS: makes an empty password manager
     public PasswordManager() {
         passwordLogs = new ArrayList<>();
+        json = null;
     }
 
     // MODIFIES: this
@@ -83,10 +89,7 @@ public class PasswordManager {
     // EFFECTS: returns all titles of saved passwords sorted either alphabetically or reverse alphabetically, depending
                 // on order
     public List<String> viewPasswordsSorted(String order) {
-        List<String> plTitles = new ArrayList<>();
-        for (PasswordLog pl : passwordLogs) {
-            plTitles.add(pl.getTitle());
-        }
+        List<String> plTitles = viewPasswords();
 
         if (order.equals("alphabetical")) {
             Collections.sort(plTitles);
@@ -102,4 +105,63 @@ public class PasswordManager {
     public List<PasswordLog> getPasswordLogs() {
         return passwordLogs;
     }
+
+    public void setJson(JSONObject json) {
+        this.json = json;
+    }
+
+    public JSONObject addLogToJson(PasswordLog pl) {
+        JSONArray logs = json.getJSONArray("passwordLogs");
+        logs.put(0, pl.toJson());
+
+        return json;
+    }
+
+    public JSONObject deleteLogFromJson(PasswordLog pl) {
+        JSONArray logs = json.getJSONArray("passwordLogs");
+        for (int i = 0; i < logs.length(); i++) {
+            JSONObject log = logs.getJSONObject(i);
+            if (log.getString("title") == pl.getTitle()) {
+                logs.remove(i);
+                break;
+            }
+        }
+
+        return json;
+    }
+
+    public JSONObject updateLogInJson(PasswordLog pl, String info, String value) {
+        JSONArray logs = json.getJSONArray("passwordLogs");
+        JSONObject toUpdate = null;
+        for (int i = 0; i < logs.length(); i++) {
+            JSONObject log = logs.getJSONObject(i);
+            if (log.getString("title") == pl.getTitle()) {
+                toUpdate = log;
+                break;
+            }
+        }
+        toUpdate.remove(info);
+        toUpdate.put(info, value);
+
+        return json;
+    }
+
+    @Override
+    public JSONObject toJson() { //credit: JsonSerializationDemo
+        JSONObject json = new JSONObject();
+        json.put("passwordLogs", logsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns the password logs in this password manager as a JSON array
+    private JSONArray logsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (PasswordLog pl : passwordLogs) {
+            jsonArray.put(pl.toJson());
+        }
+
+        return jsonArray;
+    }
+
 }

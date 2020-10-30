@@ -2,6 +2,7 @@ package ui;
 
 import model.Password;
 import model.PasswordLog;
+import model.PasswordManager;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ import static ui.PasswordApp.stringInput;
  */
 
 public class PasswordManagerPage {
+
+    private static PasswordManager passwordManager;
 
     // MODIFIES: PasswordApp, PasswordManager, Password, PasswordLog
     // EFFECTS: shows stored passwords and presents user with commands for the password manager
@@ -106,6 +109,7 @@ public class PasswordManagerPage {
             boolean added = passwordManager.addPasswordLog(pw, title);
             if (added) {
                 System.out.println("Password successfully saved under \"" + title + "\"!");
+                PasswordApp.savePasswordManager("add", passwordManager.getPasswordLog(title), "", "");
                 savingPassword = false;
             } else {
                 System.out.println("A password log with name \""
@@ -158,6 +162,7 @@ public class PasswordManagerPage {
             if (passwordManager.viewPasswords().contains(title)) {
                 passwordManager.deletePasswordLog(title);
                 System.out.println("Password saved under under \"" + title + "\" has successfully been deleted.");
+                PasswordApp.savePasswordManager("delete", passwordManager.getPasswordLog(title), "", "");
                 deletingPassword = false;
             } else {
                 System.out.println("A password log with name \""

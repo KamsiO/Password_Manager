@@ -1,6 +1,7 @@
 package model;
 
 import com.mifmif.common.regex.Generex;
+import persistence.Writable;
 
 import java.util.*;
 import java.util.regex.Pattern;

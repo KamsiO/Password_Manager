@@ -1,11 +1,14 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 /**
  * A representation of a stored password. A password is stored under a title, and has an associated username and url
  * and a notes section. All of these stored attributes including the password and title can be updated.
  */
 
-public class PasswordLog {
+public class PasswordLog implements Writable {
     private String title;
     private Password password;
     private String url;
@@ -28,6 +31,17 @@ public class PasswordLog {
         this.url = url;
         username = user;
         this.notes = notes;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("password", password.getPassword());
+        json.put("title", title);
+        json.put("username", username);
+        json.put("url", url);
+        json.put("notes", notes);
+        return json;
     }
 
     // MODIFIES: this

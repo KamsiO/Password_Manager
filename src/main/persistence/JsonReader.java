@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 // Represents a reader that parses password manager from JSON data stored in file
 
-public class JsonReader { //largely influenced by JsonSerializationDemo
+public class JsonReader { //largely based off of JsonSerializationDemo
                             // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
     private String source;
 
@@ -24,7 +24,7 @@ public class JsonReader { //largely influenced by JsonSerializationDemo
     }
 
     // EFFECTS: reads password manager from file and returns it;
-    // throws IOException if an error occurs reading data from file
+    //          throws IOException if an error occurs reading data from file
     public PasswordManager read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
@@ -32,7 +32,7 @@ public class JsonReader { //largely influenced by JsonSerializationDemo
     }
 
     // EFFECTS: reads source file as string and returns it
-    private String readFile(String source) throws IOException {
+    public String readFile(String source) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
 
         try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {

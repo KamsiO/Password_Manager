@@ -1,7 +1,10 @@
 package ui;
 
+import model.PasswordLog;
 import model.PasswordManager;
+import org.json.JSONObject;
 import persistence.JsonReader;
+import persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,14 +20,16 @@ public class PasswordApp { // ui inspired from TellerApp
     public static PasswordManager passwordManager;
     public static Scanner commandInput;
     public static Scanner stringInput;
+    private static JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
     // MODIFIES: this
     // EFFECTS: creates scanners to monitor user input and starts the Password app
-    public PasswordApp() throws FileNotFoundException {
+    public PasswordApp() throws IOException {
         commandInput = new Scanner(System.in);
         stringInput = new Scanner(System.in).useDelimiter("\n"); // post by Rajesh Samson,
             // https://stackoverflow.com/questions/39514730/how-to-take-input-as-string-with-spaces-in-java-using-scanner
+        jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         runApp();
     }
@@ -32,7 +37,7 @@ public class PasswordApp { // ui inspired from TellerApp
     // MODIFIES: this, PasswordManager, Password, PasswordLog
     // EFFECTS: initializes the app and tracks user inputs, either taking user directly to stored passwords if there
     //              are any saved, displaying the main menu, or closing the app
-    private void runApp() {
+    private void runApp() throws IOException {
         boolean running = true;
         String command;
         init();
@@ -57,7 +62,7 @@ public class PasswordApp { // ui inspired from TellerApp
     // MODIFIES: this
     // EFFECTS:  creates an empty password manager if store file can't be read
     //           otherwise, creates a password manager with saved passwords
-    private void init() { // inspired by JsonSerializationDemo
+    private void init() throws IOException { // inspired by JsonSerializationDemo
         System.out.println("\nHello!");
         try {
             passwordManager = jsonReader.read();
@@ -65,6 +70,9 @@ public class PasswordApp { // ui inspired from TellerApp
             System.out.println("Unable to read from file: " + JSON_STORE);
             passwordManager = new PasswordManager();
         }
+        String jsonData = jsonReader.readFile(JSON_STORE);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        passwordManager.setJson(jsonObject);
     }
 
     // EFFECTS: displays the starting menu of options to user
@@ -88,6 +96,18 @@ public class PasswordApp { // ui inspired from TellerApp
             CheckStrengthPage.checkPasswordStrength();
         } else {
             System.out.println("Please select 1, 2, 3, or 4.");
+        }
+    }
+
+    // MODIFIES: PasswordManager
+    // EFFECTS: saves the password manager to file
+    public static void savePasswordManager(String function, PasswordLog pl, String info, String value) {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(passwordManager, function, pl, info, value);
+            jsonWriter.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
         }
     }
 }
