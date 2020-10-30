@@ -10,7 +10,7 @@ import static model.Password.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PasswordTest {
-    Password pw;
+    private Password pw;
 
     @BeforeEach
     public void setup() {

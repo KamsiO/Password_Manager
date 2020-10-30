@@ -8,7 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PasswordManagerTest {
-    PasswordManager pm;
+    private PasswordManager pm;
 
     @BeforeEach
     public void setup() {
@@ -18,12 +18,16 @@ public class PasswordManagerTest {
     @Test
     public void testAddPasswordLogNoPasswordWithTitle() {
         Password pw = new Password();
+        PasswordLog pl = new PasswordLog(pw, "UBC");
 
-        boolean addedPassword = pm.addPasswordLog(pw, "Facebook");
+        boolean addedPassword1 = pm.addPasswordLog(pw, "Facebook");
+        boolean addedPassword2 = pm.addPasswordLog(pl, "UBC");
 
-        assertTrue(addedPassword);
-        assertEquals(1, pm.viewPasswords().size());
-        assertEquals("Facebook", pm.viewPasswords().get(0));
+        assertTrue(addedPassword1);
+        assertTrue(addedPassword2);
+        assertEquals(2, pm.getPasswordLogs().size());
+        assertEquals("UBC", pm.viewPasswords().get(0));
+        assertEquals("Facebook", pm.viewPasswords().get(1));
     }
 
     @Test
@@ -31,11 +35,14 @@ public class PasswordManagerTest {
         Password pw1 = new Password();
         Password pw2 = new Password();
         pm.addPasswordLog(pw1, "GMail");
+        PasswordLog pl = new PasswordLog(pw2, "gmail");
 
-        boolean addedPassword = pm.addPasswordLog(pw2, "Gmail");
+        boolean addedPassword1 = pm.addPasswordLog(pw2, "Gmail");
+        boolean addedPassword2 = pm.addPasswordLog(pl, "gmail");
 
-        assertTrue(addedPassword);
-        assertEquals(2, pm.viewPasswords().size());
+        assertTrue(addedPassword1);
+        assertTrue(addedPassword2);
+        assertEquals(3, pm.getPasswordLogs().size());
     }
 
     @Test
@@ -43,11 +50,14 @@ public class PasswordManagerTest {
         Password pw1 = new Password();
         Password pw2 = new Password();
         pm.addPasswordLog(pw1, "Snapchat");
+        PasswordLog pl = new PasswordLog(pw2, "Snapchat");
 
-        boolean addedPassword = pm.addPasswordLog(pw2, "Snapchat");
+        boolean addedPassword1 = pm.addPasswordLog(pw2, "Snapchat");
+        boolean addedPassword2 = pm.addPasswordLog(pl, "Snapchat");
 
-        assertFalse(addedPassword);
-        assertEquals(1, pm.viewPasswords().size());
+        assertFalse(addedPassword1);
+        assertFalse(addedPassword2);
+        assertEquals(1, pm.getPasswordLogs().size());
     }
 
     @Test
@@ -57,7 +67,7 @@ public class PasswordManagerTest {
 
         pm.deletePasswordLog("Snapchat");
 
-        assertEquals(0, pm.viewPasswords().size());
+        assertEquals(0, pm.getPasswordLogs().size());
     }
 
     @Test
@@ -69,7 +79,7 @@ public class PasswordManagerTest {
 
         pm.deletePasswordLog("Snapchat");
 
-        assertEquals(1, pm.viewPasswords().size());
+        assertEquals(1, pm.getPasswordLogs().size());
         assertEquals("Snapchat 2", pm.viewPasswords().get(0));
     }
 

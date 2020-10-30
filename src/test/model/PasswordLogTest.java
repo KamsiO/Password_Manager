@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PasswordLogTest {
-    PasswordLog pl;
+    private PasswordLog pl;
 
     @BeforeEach
     public void setup() {

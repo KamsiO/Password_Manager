@@ -2,7 +2,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -12,24 +11,37 @@ import java.util.List;
  */
 
 public class PasswordManager {
-    private List<PasswordLog> pm;
+    private List<PasswordLog> passwordLogs;
 
     // EFFECTS: makes an empty password manager
     public PasswordManager() {
-        pm = new ArrayList<>();
+        passwordLogs = new ArrayList<>();
     }
 
     // MODIFIES: this
     // EFFECTS: if a password under the given case-sensitive title doesn't exist, saves password under title and
                     // returns true, otherwise returns false
     public boolean addPasswordLog(Password pw, String title) {
-        for (PasswordLog pl : pm) {
+        for (PasswordLog pl : passwordLogs) {
             if (pl.getTitle().equals(title)) {
                 return false;
             }
         }
         PasswordLog pl = new PasswordLog(pw, title);
-        pm.add(0, pl);
+        passwordLogs.add(0, pl);
+        return true;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: if a password log with the given case-sensitive title doesn't exist, adds password log to password
+    //              manager and returns true, otherwise returns false
+    public boolean addPasswordLog(PasswordLog log, String title) {
+        for (PasswordLog pl : passwordLogs) {
+            if (pl.getTitle().equals(title)) {
+                return false;
+            }
+        }
+        passwordLogs.add(0, log);
         return true;
     }
 
@@ -38,19 +50,19 @@ public class PasswordManager {
     // EFFECTS: removes password log with given title
     public void deletePasswordLog(String title) {
         PasswordLog pl = null;
-        for (PasswordLog p : pm) {
+        for (PasswordLog p : passwordLogs) {
             if (p.getTitle().equals(title)) {
                 pl = p;
             }
         }
-        pm.remove(pl);
+        passwordLogs.remove(pl);
     }
 
     // REQUIRES: there must be a saved password with given title
     // EFFECTS: returns password log with given title
     public PasswordLog getPasswordLog(String title) {
         PasswordLog pl = null;
-        for (PasswordLog p : pm) {
+        for (PasswordLog p : passwordLogs) {
             if (p.getTitle().equals(title)) {
                 pl = p;
             }
@@ -61,7 +73,7 @@ public class PasswordManager {
     // EFFECTS: returns the titles of all saved passwords
     public List<String> viewPasswords() {
         List<String> plTitles = new ArrayList<>();
-        for (PasswordLog pl : pm) {
+        for (PasswordLog pl : passwordLogs) {
             plTitles.add(pl.getTitle());
         }
         return plTitles;
@@ -72,7 +84,7 @@ public class PasswordManager {
                 // on order
     public List<String> viewPasswordsSorted(String order) {
         List<String> plTitles = new ArrayList<>();
-        for (PasswordLog pl : pm) {
+        for (PasswordLog pl : passwordLogs) {
             plTitles.add(pl.getTitle());
         }
 
@@ -84,5 +96,10 @@ public class PasswordManager {
         }
 
         return plTitles;
+    }
+
+    // EFFECTS: returns password logs in password manager
+    public List<PasswordLog> getPasswordLogs() {
+        return passwordLogs;
     }
 }

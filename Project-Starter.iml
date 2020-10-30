@@ -46,5 +46,14 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="com.github.mifmif:generex:1.0.2" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/json-20200518.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

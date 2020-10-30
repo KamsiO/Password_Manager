@@ -1,7 +1,10 @@
 package ui;
 
 import model.PasswordManager;
+import persistence.JsonReader;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -10,25 +13,33 @@ import java.util.Scanner;
  */
 
 public class PasswordApp { // ui inspired from TellerApp
+    private static final String JSON_STORE = "./data/passwordmanager.json";
     public static PasswordManager passwordManager;
     public static Scanner commandInput;
     public static Scanner stringInput;
+    private JsonReader jsonReader;
 
     // MODIFIES: this
     // EFFECTS: creates scanners to monitor user input and starts the Password app
-    public PasswordApp() {
+    public PasswordApp() throws FileNotFoundException {
         commandInput = new Scanner(System.in);
         stringInput = new Scanner(System.in).useDelimiter("\n"); // post by Rajesh Samson,
             // https://stackoverflow.com/questions/39514730/how-to-take-input-as-string-with-spaces-in-java-using-scanner
+        jsonReader = new JsonReader(JSON_STORE);
         runApp();
     }
 
     // MODIFIES: this, PasswordManager, Password, PasswordLog
-    // EFFECTS: initializes the app and tracks user inputs, either displaying the main menu or closing the app
+    // EFFECTS: initializes the app and tracks user inputs, either taking user directly to stored passwords if there
+    //              are any saved, displaying the main menu, or closing the app
     private void runApp() {
         boolean running = true;
         String command;
         init();
+
+        if (passwordManager.viewPasswords().size() > 0) {
+            PasswordManagerPage.viewPasswordManager();
+        }
 
         while (running) {
             displayMainMenu();
@@ -44,10 +55,16 @@ public class PasswordApp { // ui inspired from TellerApp
     }
 
     // MODIFIES: this
-    // EFFECTS: creates a password manager
-    private void init() {
+    // EFFECTS:  creates an empty password manager if store file can't be read
+    //           otherwise, creates a password manager with saved passwords
+    private void init() { // inspired by JsonSerializationDemo
         System.out.println("\nHello!");
-        passwordManager = new PasswordManager();
+        try {
+            passwordManager = jsonReader.read();
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+            passwordManager = new PasswordManager();
+        }
     }
 
     // EFFECTS: displays the starting menu of options to user
