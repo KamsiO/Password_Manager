@@ -21,11 +21,12 @@ public class PasswordManager implements Writable {
     // EFFECTS: makes an empty password manager
     public PasswordManager() {
         passwordLogs = new ArrayList<>();
+        json = null;
     }
 
     // MODIFIES: this
     // EFFECTS: if a password under the given case-sensitive title doesn't exist, saves password under title and
-                    // returns true, otherwise returns false
+    // returns true, otherwise returns false
     public boolean addPasswordLog(Password pw, String title) {
         for (PasswordLog pl : passwordLogs) {
             if (pl.getTitle().equals(title)) {
@@ -86,7 +87,7 @@ public class PasswordManager implements Writable {
 
     // REQUIRES: order is one of: "alphabetical", "reverse"
     // EFFECTS: returns all titles of saved passwords sorted either alphabetically or reverse alphabetically, depending
-                // on order
+    // on order
     public List<String> viewPasswordsSorted(String order) {
         List<String> plTitles = viewPasswords();
 
@@ -109,6 +110,53 @@ public class PasswordManager implements Writable {
         this.json = json;
     }
 
+    public JSONObject addLogToJson(PasswordLog pl) {
+        if (json == null) {
+            json = toJson();
+        } else {
+            JSONArray logs = json.getJSONArray("passwordLogs");
+            logs.put(pl.toJson());
+        }
+
+        return json;
+    }
+
+    public JSONObject deleteLogFromJson(PasswordLog pl) {
+        if (json == null) {
+            json = toJson();
+        }
+        int deleteIndex = 0;
+        JSONArray logs = json.getJSONArray("passwordLogs");
+        for (int i = 0; i < logs.length(); i++) {
+            JSONObject log = logs.getJSONObject(i);
+            if (log.getString("title") == pl.getTitle()) {
+                deleteIndex = i;
+                break;
+            }
+        }
+        logs.remove(deleteIndex);
+        return json;
+    }
+
+    public JSONObject updateLogInJson(PasswordLog pl, String info, String value) {
+        if (json == null) {
+            json = toJson();
+        }
+        JSONArray logs = json.getJSONArray("passwordLogs");
+        JSONObject toUpdate = null;
+        for (int i = 0; i < logs.length(); i++) {
+            JSONObject log = logs.getJSONObject(i);
+            if (log.getString("title") == pl.getTitle()) {
+                toUpdate = log;
+                break;
+            }
+        }
+        toUpdate.remove(info);
+        toUpdate.put(info, value);
+
+        return json;
+    }
+
     @Override
     public JSONObject toJson() { //credit: JsonSerializationDemo
         JSONObject json = new JSONObject();
@@ -119,9 +167,11 @@ public class PasswordManager implements Writable {
     // EFFECTS: returns the password logs in this password manager as a JSON array
     private JSONArray logsToJson() {
         JSONArray jsonArray = new JSONArray();
+        PasswordLog log;
 
-        for (PasswordLog pl : passwordLogs) {
-            jsonArray.put(pl.toJson());
+        for (int i = passwordLogs.size() - 1; i >= 0; i--) {
+            log = passwordLogs.get(i);
+            jsonArray.put(log.toJson());
         }
 
         return jsonArray;

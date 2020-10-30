@@ -2,6 +2,7 @@ package ui;
 
 import model.PasswordLog;
 import model.PasswordManager;
+import org.json.JSONObject;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -27,7 +28,7 @@ public class PasswordApp { // ui inspired from TellerApp
     public PasswordApp() throws FileNotFoundException {
         commandInput = new Scanner(System.in);
         stringInput = new Scanner(System.in).useDelimiter("\n"); // post by Rajesh Samson,
-            // https://stackoverflow.com/questions/39514730/how-to-take-input-as-string-with-spaces-in-java-using-scanner
+        // https://stackoverflow.com/questions/39514730/how-to-take-input-as-string-with-spaces-in-java-using-scanner
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         runApp();
@@ -97,10 +98,10 @@ public class PasswordApp { // ui inspired from TellerApp
 
     // MODIFIES: PasswordManager
     // EFFECTS: saves the password manager to file
-    public static void savePasswordManager() {
+    public static void savePasswordManager(String function, PasswordLog pl, String info, String value) {
         try {
             jsonWriter.open();
-            jsonWriter.write(passwordManager);
+            jsonWriter.write(passwordManager, function, pl, info, value);
             jsonWriter.close();
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);

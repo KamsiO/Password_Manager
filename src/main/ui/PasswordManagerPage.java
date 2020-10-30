@@ -107,7 +107,7 @@ public class PasswordManagerPage {
             boolean added = passwordManager.addPasswordLog(pw, title);
             if (added) {
                 System.out.println("Password successfully saved under \"" + title + "\"!");
-                PasswordApp.savePasswordManager();
+                PasswordApp.savePasswordManager("add", passwordManager.getPasswordLog(title), "", "");
                 savingPassword = false;
             } else {
                 System.out.println("A password log with name \""
@@ -158,9 +158,9 @@ public class PasswordManagerPage {
         while (deletingPassword) {
             String title = stringInput.next();
             if (passwordManager.viewPasswords().contains(title)) {
+                PasswordApp.savePasswordManager("delete", passwordManager.getPasswordLog(title), "", "");
                 passwordManager.deletePasswordLog(title);
                 System.out.println("Password saved under under \"" + title + "\" has successfully been deleted.");
-                PasswordApp.savePasswordManager();
                 deletingPassword = false;
             } else {
                 System.out.println("A password log with name \""

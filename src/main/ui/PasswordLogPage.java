@@ -82,14 +82,16 @@ public class PasswordLogPage {
             String newInfo = stringInput.next();
             if (s.equals("username")) {
                 pl.setUsername(newInfo);
+                PasswordApp.savePasswordManager("update", pl, "username", newInfo);
             } else if (s.equals("url")) {
                 pl.setURL(newInfo);
+                PasswordApp.savePasswordManager("update", pl, "url", newInfo);
             } else if (s.equals("notes")) {
                 pl.setNotes(newInfo);
+                PasswordApp.savePasswordManager("update", pl, "notes", newInfo);
             }
         }
         System.out.println("Password log successfully updated!");
-        PasswordApp.savePasswordManager();
         viewPasswordLog(pl);
     }
 
@@ -104,8 +106,8 @@ public class PasswordLogPage {
                 System.out.println("A password log with name \""
                         + newTitle + "\" already exists. Please input another name.");
             } else {
+                PasswordApp.savePasswordManager("update", pl, "title", newTitle);
                 pl.updateTitle(newTitle);
-                PasswordApp.savePasswordManager();
                 updatingTitle = false;
             }
         }
@@ -138,7 +140,7 @@ public class PasswordLogPage {
     private static void updatePasswordGenerated(Password newPassword, PasswordLog pl) {
         newPassword.generateStrongPassword();
         pl.updatePassword(newPassword);
-        PasswordApp.savePasswordManager();
+        PasswordApp.savePasswordManager("update", pl, "password", newPassword.getPassword());
     }
 
     private static void updatePasswordInputted(Password newPassword, PasswordLog pl) {
@@ -146,6 +148,6 @@ public class PasswordLogPage {
         String pw = stringInput.next();
         newPassword.setPassword(pw);
         pl.updatePassword(newPassword);
-        PasswordApp.savePasswordManager();
+        PasswordApp.savePasswordManager("update", pl, "password", pw);
     }
 }
