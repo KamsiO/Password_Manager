@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.ObjectNotFoundException;
 import model.PasswordLog;
 import model.PasswordManager;
 import org.json.JSONObject;
@@ -105,6 +106,8 @@ public class PasswordApp { // ui inspired from TellerApp
             jsonWriter.close();
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);
+        } catch (ObjectNotFoundException e) {
+            System.out.println("Unable to save changes.");
         }
     }
 }

@@ -1,5 +1,6 @@
 package persistence;
 
+import exceptions.ObjectNotFoundException;
 import model.Password;
 import model.PasswordLog;
 import model.PasswordManager;
@@ -50,6 +51,46 @@ class JsonWriterTest extends JsonTest {
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
+        }
+    }
+
+    @Test
+    void testWriterEmptyPasswordManagerDeleteLogThrowsObjectNotFound() {
+        try {
+            //setup
+            PasswordManager pm = new PasswordManager(); //doesn't read from json before deleting, so pm is empty
+            PasswordLog pl = new PasswordLog(new Password("password123"), "UBC", "kamsi", "ubc.ca", "notes");
+            JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
+            writer.open();
+
+            //method call
+            writer.write(pm, "delete", pl, "", "");
+            fail("Should throw ObjetNotFound");
+
+        } catch (IOException e) {
+            fail("Exception should not have been thrown");
+        } catch (ObjectNotFoundException e) {
+            //expected
+        }
+    }
+
+    @Test
+    void testWriterEmptyPasswordManagerUpdateLogThrowsObjectNotFound() {
+        try {
+            //setup
+            PasswordManager pm = new PasswordManager(); //doesn't read from json before deleting, so pm is empty
+            PasswordLog pl = new PasswordLog(new Password("password123"), "UBC", "kamsi", "ubc.ca", "notes");
+            JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
+            writer.open();
+
+            //method call
+            writer.write(pm, "update", pl, "title", "New");
+            fail("Should throw ObjetNotFound");
+
+        } catch (IOException e) {
+            fail("Exception should not have been thrown");
+        } catch (ObjectNotFoundException e) {
+            //expected
         }
     }
 

@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.ObjectNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -121,26 +122,33 @@ public class PasswordManager implements Writable {
     }
 
     // MODIFIES: this
-    // EFFECTS: deletes the json object that represents the given password log
+    // EFFECTS: if the object to delete is not found, throws ObjectNotFoundException
+    //          otherwise deletes the json object that represents the given password log
     public JSONObject deleteLogFromJson(PasswordLog pl) {
         if (json == null) {
             json = toJson();
         }
         int deleteIndex = 0;
+        boolean foundObject = false;
         JSONArray logs = json.getJSONArray("passwordLogs");
         for (int i = 0; i < logs.length(); i++) {
             JSONObject log = logs.getJSONObject(i);
             if (log.getString("title").equals(pl.getTitle())) {
                 deleteIndex = i;
+                foundObject = true;
                 break;
             }
+        }
+        if (!foundObject) {
+            throw new ObjectNotFoundException();
         }
         logs.remove(deleteIndex);
         return json;
     }
 
     // MODIFIES: this
-    // EFFECTS: updates the key value in the json file for the json object that represents given password log
+    // EFFECTS: if the object to update is not found, throws ObjectNotFoundException
+    //          otherwise, updates the key value in the json file for the json object that represents given password log
     public JSONObject updateLogInJson(PasswordLog pl, String info, String value) {
         if (json == null) {
             json = toJson();
@@ -153,6 +161,9 @@ public class PasswordManager implements Writable {
                 toUpdate = log;
                 break;
             }
+        }
+        if (toUpdate == null) {
+            throw new ObjectNotFoundException();
         }
         toUpdate.remove(info);
         toUpdate.put(info, value);
