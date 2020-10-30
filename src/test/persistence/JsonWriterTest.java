@@ -147,6 +147,112 @@ class JsonWriterTest extends JsonTest {
         }
     }
 
+    @Test
+    public void testWriterAddMultiple() {
+        try {
+            //setup
+            PasswordManager pm;
+            PasswordLog pl = new PasswordLog(new Password("abc"), "gmail", "kamsi", "gmail.com", "notes");
+            PasswordLog pl2 = new PasswordLog(new Password(), "test");
+            JsonReader reader = new JsonReader("./data/testWriterGeneralPasswordManager.json");
+            JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
+            restoreToInitial();
+            pm = reader.read();
+            pm.addPasswordLog(pl, "gmail");
+            pm.addPasswordLog(pl, "test");
+
+            //add
+            writer.open();
+            writer.write(pm, "add", pl, "", "");
+            writer.close();
+            //add again
+            writer.open();
+            writer.write(pm, "add", pl2, "", "");
+            writer.close();
+
+            //assertions
+            pm = reader.read();
+            assertEquals(3, pm.getPasswordLogs().size());
+
+        } catch (IOException e) {
+            fail("Exception should not have been thrown");
+        }
+    }
+
+    @Test
+    public void testWriterMultipleWritesDelete() {
+        try {
+            //setup
+            PasswordManager pm;
+            PasswordLog pl = new PasswordLog(new Password("abc"), "gmail", "kamsi", "gmail.com", "notes");
+            JsonReader reader = new JsonReader("./data/testWriterGeneralPasswordManager.json");
+            JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
+            restoreToInitial();
+            pm = reader.read();
+            pm.addPasswordLog(pl, "gmail");
+
+            //add
+            writer.open();
+            writer.write(pm, "add", pl, "", "");
+            writer.close();
+            //delete
+            writer.open();
+            writer.write(pm, "delete", pl, "", "");
+            writer.close();
+
+            //assertions
+            pm = reader.read();
+            assertEquals(1, pm.getPasswordLogs().size());
+
+        } catch (IOException e) {
+            fail("Exception should not have been thrown");
+        }
+    }
+
+    @Test
+    public void testWriterMultipleWritesUpdate() {
+        try {
+            //setup
+            PasswordManager pm;
+            PasswordLog pl = new PasswordLog(new Password("abc"), "gmail", "kamsi", "gmail.com", "notes");
+            JsonReader reader = new JsonReader("./data/testWriterGeneralPasswordManager.json");
+            JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
+            restoreToInitial();
+            pm = reader.read();
+            pm.addPasswordLog(pl, "gmail");
+
+            //add
+            writer.open();
+            writer.write(pm, "add", pl, "", "");
+            writer.close();
+            //update
+            writer.open();
+            writer.write(pm, "update", pl, "password", "newpassword");
+            writer.close();
+            writer.open();
+            writer.write(pm, "update", pl, "username", "aPerson");
+            writer.close();
+            writer.open();
+            writer.write(pm, "update", pl, "url", "new.com");
+            writer.close();
+            writer.open();
+            writer.write(pm, "update", pl, "notes", "new notes");
+            writer.close();
+            writer.open();
+            writer.write(pm, "update", pl, "title", "New");
+            writer.close();
+
+            //assertions
+            pm = reader.read();
+            List<PasswordLog> logs = pm.getPasswordLogs();
+            assertEquals(2, pm.getPasswordLogs().size());
+            checkLog("newpassword", "New", "aPerson", "new.com", "new notes", logs.get(0));
+
+        } catch (IOException e) {
+            fail("Exception should not have been thrown");
+        }
+    }
+
     private void restoreToInitial() {
         JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
         PasswordManager pm = new PasswordManager();
