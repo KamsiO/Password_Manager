@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+// Represents a writer that writes JSON representation of password manager to file
+
 public class JsonWriter { //largely based off of JsonSerializationDemo
     private static final int TAB = 4;
     private PrintWriter writer;
@@ -26,7 +28,7 @@ public class JsonWriter { //largely based off of JsonSerializationDemo
     }
 
     // REQUIRES: function is one of "add", "delete", "update"
-    // MODIFIES: this
+    // MODIFIES: this, PasswordManager
     // EFFECTS: writes JSON representation of password manager to file
     public void write(PasswordManager pm, String function, PasswordLog pl, String info, String value) {
         JSONObject json;
@@ -54,6 +56,13 @@ public class JsonWriter { //largely based off of JsonSerializationDemo
     // EFFECTS: writes string to file
     private void saveToFile(String json) {
         writer.print(json);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: writes JSON representation of password manager to file
+    public void writeForTest(PasswordManager pm) { //credit: JsonSerializationDemo
+        JSONObject json = pm.toJson();
+        saveToFile(json.toString(TAB));
     }
 }
 

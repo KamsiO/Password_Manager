@@ -72,7 +72,7 @@ public class PasswordLogPage {
         }
     }
 
-    // MODIFIES: PasswordLog
+    // MODIFIES: PasswordLog, PasswordManager
     // EFFECTS: updates the specified info of the given password log to user's input
     private static void updateRelatedLogInfo(String s, PasswordLog pl) {
         System.out.println("\nPlease type in what you would like it to be replaced with:");
@@ -95,7 +95,7 @@ public class PasswordLogPage {
         viewPasswordLog(pl);
     }
 
-    // MODIFIES: PasswordLog
+    // MODIFIES: PasswordLog, PasswordManager
     // EFFECTS: updates the title of the password log to user's input if a password log with that name does not
     // already exist
     private static void updateTitle(PasswordLog pl) {
@@ -113,7 +113,7 @@ public class PasswordLogPage {
         }
     }
 
-    // MODIFIES: Password, PasswordLog
+    // MODIFIES: Password, PasswordLog, PasswordManager
     // EFFECTS: updates the stored password in the password log to be a generated password or inputted password
     private static void updatePassword(PasswordLog pl) {
         boolean choosing = true;
@@ -137,12 +137,16 @@ public class PasswordLogPage {
         }
     }
 
+    // MODIFIES: Password, PasswordLog, PasswordManager
+    // EFFECTS: updates the stored password in the password log to be a generated password
     private static void updatePasswordGenerated(Password newPassword, PasswordLog pl) {
         newPassword.generateStrongPassword();
         pl.updatePassword(newPassword);
         PasswordApp.savePasswordManager("update", pl, "password", newPassword.getPassword());
     }
 
+    // MODIFIES: Password, PasswordLog, PasswordManager
+    // EFFECTS: updates the stored password in the password log to be an inputted password
     private static void updatePasswordInputted(Password newPassword, PasswordLog pl) {
         System.out.println("Please type in the password you would like to save.");
         String pw = stringInput.next();

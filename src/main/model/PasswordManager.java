@@ -106,10 +106,9 @@ public class PasswordManager implements Writable {
         return passwordLogs;
     }
 
-    public void setJson(JSONObject json) {
-        this.json = json;
-    }
 
+    // MODIFIES: this
+    // EFFECTS: adds a json object that represents the given password log
     public JSONObject addLogToJson(PasswordLog pl) {
         if (json == null) {
             json = toJson();
@@ -121,6 +120,8 @@ public class PasswordManager implements Writable {
         return json;
     }
 
+    // MODIFIES: this
+    // EFFECTS: deletes the json object that represents the given password log
     public JSONObject deleteLogFromJson(PasswordLog pl) {
         if (json == null) {
             json = toJson();
@@ -129,7 +130,7 @@ public class PasswordManager implements Writable {
         JSONArray logs = json.getJSONArray("passwordLogs");
         for (int i = 0; i < logs.length(); i++) {
             JSONObject log = logs.getJSONObject(i);
-            if (log.getString("title") == pl.getTitle()) {
+            if (log.getString("title").equals(pl.getTitle())) {
                 deleteIndex = i;
                 break;
             }
@@ -138,6 +139,8 @@ public class PasswordManager implements Writable {
         return json;
     }
 
+    // MODIFIES: this
+    // EFFECTS: updates the key value in the json file for the json object that represents given password log
     public JSONObject updateLogInJson(PasswordLog pl, String info, String value) {
         if (json == null) {
             json = toJson();
@@ -146,7 +149,7 @@ public class PasswordManager implements Writable {
         JSONObject toUpdate = null;
         for (int i = 0; i < logs.length(); i++) {
             JSONObject log = logs.getJSONObject(i);
-            if (log.getString("title") == pl.getTitle()) {
+            if (log.getString("title").equals(pl.getTitle())) {
                 toUpdate = log;
                 break;
             }
