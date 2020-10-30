@@ -1,6 +1,5 @@
 package persistence;
 
-import model.PasswordLog;
 import model.PasswordManager;
 import org.json.JSONObject;
 
@@ -25,22 +24,10 @@ public class JsonWriter { //largely based off of JsonSerializationDemo
         writer = new PrintWriter(new File(destination));
     }
 
-    // REQUIRES: function is one of "add", "delete", "update"
     // MODIFIES: this
     // EFFECTS: writes JSON representation of password manager to file
-    public void write(PasswordManager pm, String function, PasswordLog pl, String info, String value) {
-        JSONObject json;
-        switch (function) {
-            case "add":
-                json = pm.addLogToJson(pl);
-                break;
-            case "delete":
-                json = pm.deleteLogFromJson(pl);
-                break;
-            default:
-                json = pm.updateLogInJson(pl, info, value);
-                break;
-        }
+    public void write(PasswordManager pm) {
+        JSONObject json = pm.toJson();
         saveToFile(json.toString(TAB));
     }
 

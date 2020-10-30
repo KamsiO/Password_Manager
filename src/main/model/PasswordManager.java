@@ -21,7 +21,6 @@ public class PasswordManager implements Writable {
     // EFFECTS: makes an empty password manager
     public PasswordManager() {
         passwordLogs = new ArrayList<>();
-        json = null;
     }
 
     // MODIFIES: this
@@ -108,42 +107,6 @@ public class PasswordManager implements Writable {
 
     public void setJson(JSONObject json) {
         this.json = json;
-    }
-
-    public JSONObject addLogToJson(PasswordLog pl) {
-        JSONArray logs = json.getJSONArray("passwordLogs");
-        logs.put(0, pl.toJson());
-
-        return json;
-    }
-
-    public JSONObject deleteLogFromJson(PasswordLog pl) {
-        JSONArray logs = json.getJSONArray("passwordLogs");
-        for (int i = 0; i < logs.length(); i++) {
-            JSONObject log = logs.getJSONObject(i);
-            if (log.getString("title") == pl.getTitle()) {
-                logs.remove(i);
-                break;
-            }
-        }
-
-        return json;
-    }
-
-    public JSONObject updateLogInJson(PasswordLog pl, String info, String value) {
-        JSONArray logs = json.getJSONArray("passwordLogs");
-        JSONObject toUpdate = null;
-        for (int i = 0; i < logs.length(); i++) {
-            JSONObject log = logs.getJSONObject(i);
-            if (log.getString("title") == pl.getTitle()) {
-                toUpdate = log;
-                break;
-            }
-        }
-        toUpdate.remove(info);
-        toUpdate.put(info, value);
-
-        return json;
     }
 
     @Override
