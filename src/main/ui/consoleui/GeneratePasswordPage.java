@@ -1,8 +1,8 @@
-package ui;
+package ui.consoleui;
 
 import model.Password;
 
-import static ui.PasswordApp.commandInput;
+import static ui.consoleui.PasswordApp.commandInput;
 
 /**
  * Monitors and presents information from/for the password generation section of the console ui.

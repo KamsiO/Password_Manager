@@ -1,4 +1,4 @@
-package ui;
+package ui.consoleui;
 
 import java.io.FileNotFoundException;
 

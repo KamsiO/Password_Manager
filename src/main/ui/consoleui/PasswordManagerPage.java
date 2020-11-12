@@ -1,14 +1,13 @@
-package ui;
+package ui.consoleui;
 
 import model.Password;
 import model.PasswordLog;
-import model.PasswordManager;
 
 import java.util.List;
 
-import static ui.PasswordApp.passwordManager;
-import static ui.PasswordApp.commandInput;
-import static ui.PasswordApp.stringInput;
+import static ui.consoleui.PasswordApp.passwordManager;
+import static ui.consoleui.PasswordApp.commandInput;
+import static ui.consoleui.PasswordApp.stringInput;
 
 /**
  * Monitors and presents information from/for the password manager section of the console ui.

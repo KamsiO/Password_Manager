@@ -1,9 +1,8 @@
-package ui;
+package ui.consoleui;
 
 import exceptions.ObjectNotFoundException;
 import model.PasswordLog;
 import model.PasswordManager;
-import org.json.JSONObject;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 

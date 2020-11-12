@@ -1,11 +1,11 @@
-package ui;
+package ui.consoleui;
 
 import model.Password;
 
 import java.util.List;
 
-import static ui.PasswordApp.commandInput;
-import static ui.PasswordApp.stringInput;
+import static ui.consoleui.PasswordApp.commandInput;
+import static ui.consoleui.PasswordApp.stringInput;
 
 /**
  * Monitors and presents information from/for the password strength checker section of the console ui.

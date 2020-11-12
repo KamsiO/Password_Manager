@@ -1,11 +1,11 @@
-package ui;
+package ui.consoleui;
 
 import model.Password;
 import model.PasswordLog;
 
-import static ui.PasswordApp.passwordManager;
-import static ui.PasswordApp.commandInput;
-import static ui.PasswordApp.stringInput;
+import static ui.consoleui.PasswordApp.passwordManager;
+import static ui.consoleui.PasswordApp.commandInput;
+import static ui.consoleui.PasswordApp.stringInput;
 
 /**
  * Monitors and presents information from/for a password log selected from the password manager section.

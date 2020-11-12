@@ -37,8 +37,8 @@ public class Password {
     }
 
     // MODIFIES: this
-    // EFFECTS: generates and sets password to a string that is MIN_PASSWORD_LENGTH - MAX_PASSWORD_LENGTH characters
-                // long and has all the requirements of a strong password
+    // EFFECTS: generates and sets password to a string that is MIN_PASSWORD_LENGTH to MAX_PASSWORD_LENGTH characters
+    //              long and has all the requirements of a strong password
     public void generateStrongPassword() {
         Generex generex = new Generex("[0-9]+[A-Z]+[a-z]+[!\"#$%&'()*+,-./:;=?@^_{}~]{1,3}");
         String stringFromRegex = generex.random(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH); // creates a string of length
@@ -85,7 +85,7 @@ public class Password {
     }
 
     // EFFECTS: returns a list of which requirements the password passed and failed
-                // in order of: length, lowercase, uppercase, digit, and special character
+    //              in order of: length, lowercase, uppercase, digit, and special character
     public List<Boolean> getPasswordStrength() {
         List<Boolean> strength = new ArrayList<>();
         strength.add(this.length);
