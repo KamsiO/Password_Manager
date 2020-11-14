@@ -25,6 +25,7 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
 
     private JButton generateBtn;
     private JButton copyBtn;
+    private PasswordSaver saver;
 
     private int colorChange;
     private int alphaChange;
@@ -34,6 +35,7 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
     public GeneratePasswordPage() {
+        saver = new PasswordSaver();
         initializeGraphics();
     }
 
@@ -108,6 +110,8 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
             pw.generateStrongPassword();
             password = pw.getPassword();
 
+            saver.setPassword(password);
+
             doTransition();
         }
     }
@@ -118,26 +122,25 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
         colorChange = 1;
         alphaChange = 55;
 
-        ActionListener taskPerformer = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (colorChange > 48) {
-                    timer.stop();
-                    changePage();
-                    return;
-                }
-                int color = 48 - colorChange;
-                int alpha = 255 - alphaChange;
-                page1.setBackground(new Color(color,color,color));
-                startLabel.setForeground(new Color(255, 255, 255, alpha));
-                generateBtn.setBackground(new Color(74, 74, 74, alpha));
-                repaint();
-                colorChange += 3;
-                if (alphaChange < 255) {
-                    alphaChange += 20;
-                }
+        ActionListener taskPerformer = evt -> {
+            if (colorChange > 48) {
+                timer.stop();
+                changePage();
+                return;
+            }
+            int color = 48 - colorChange;
+            int alpha = 255 - alphaChange;
+            page1.setBackground(new Color(color,color,color));
+            startLabel.setForeground(new Color(255, 255, 255, alpha));
+            generateBtn.setBackground(new Color(74, 74, 74, alpha));
+            repaint();
+            colorChange += 3;
+            if (alphaChange < 255) {
+                alphaChange += 20;
             }
         };
-        timer = new Timer(70, taskPerformer);
+
+        timer = new Timer(40, taskPerformer);
         timer.start();
     }
 
@@ -169,6 +172,7 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
             Password pw = new Password();
             pw.generateStrongPassword();
             password = pw.getPassword();
+            saver.setPassword(password);
 
             ActionListener changeLabelText = evt1 -> {
                 if (alphaChange > 255) {
@@ -183,7 +187,7 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
                 alphaChange += 20;
             };
 
-            timer = new Timer(40, changeLabelText);
+            timer = new Timer(20, changeLabelText);
             alphaChange = 55;
             timer.start();
         }
@@ -237,9 +241,9 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
         save.setForeground(new Color(150, 150, 150));
         save.setBackground(new Color(40, 40, 40));
         save.setFocusable(false);
-        //save.addActionListener(this);
+        save.addActionListener(saver);
 
-        List<JButton> buttons = new ArrayList();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(retry);
         buttons.add(copyBtn);
         buttons.add(save);

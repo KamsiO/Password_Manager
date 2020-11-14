@@ -11,6 +11,8 @@ import javax.swing.plaf.InsetsUIResource;
 import java.awt.*;
 
 public class PasswordApp extends JFrame {
+    private static JTabbedPane tabbedPane;
+
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
     private static final Dimension MIN_SIZE = new Dimension(SCREEN_SIZE.width - (SCREEN_SIZE.width / 3),
                 SCREEN_SIZE.height - (SCREEN_SIZE.height / 3));
@@ -24,6 +26,10 @@ public class PasswordApp extends JFrame {
         UIManager.put("ToolTip.background", Color.WHITE);
         UIManager.put("ToolTip.border", new BorderUIResource(new LineBorder(Color.BLACK)));
         UIManager.put("ToolTip.font", new FontUIResource(new Font("", Font.PLAIN, 30)));
+//        Dimension optionPaneSize = new Dimension(MIN_SIZE.width / 3, MIN_SIZE.height / 5);
+//        UIManager.put("OptionPane.minimumSize", optionPaneSize);
+//        int fontSize = optionPaneSize.width;
+//        UIManager.put("OptionPane.font", new Font("", Font.PLAIN, 100));
 
         new PasswordApp();
     }
@@ -32,7 +38,11 @@ public class PasswordApp extends JFrame {
         initializeGraphics();
     }
 
-    public void initializeGraphics() {
+    public static void switchTab(int index) {
+        tabbedPane.setSelectedIndex(index);
+    }
+
+    private void initializeGraphics() {
         setTitle("Password Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -61,7 +71,7 @@ public class PasswordApp extends JFrame {
         JPanel tab2 = new CheckStrengthPage();
         JPanel tab3 = new CheckStrengthPage();
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Generate", null, tab1,
                 "Generate a new password!");
 
