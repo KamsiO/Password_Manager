@@ -4,8 +4,6 @@ import model.Password;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -215,8 +213,8 @@ public class CheckStrengthPage extends JPanel implements ActionListener, KeyList
         textField = new JTextField();
         textField.setFont(new Font("", Font.PLAIN, 50));
         textField.setHorizontalAlignment(JTextField.CENTER);
-        Dimension labelSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 27);
-        textField.setPreferredSize(labelSize);
+        Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 27);
+        textField.setPreferredSize(fieldSize);
 
         textField.addKeyListener(this);
     }

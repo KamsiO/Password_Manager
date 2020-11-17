@@ -1,6 +1,5 @@
 package ui.gui;
 
-import jdk.nashorn.internal.scripts.JO;
 import model.Password;
 import model.PasswordLog;
 
@@ -10,6 +9,9 @@ import java.awt.event.ActionListener;
 
 public class PasswordSaver implements ActionListener {
     private static final int MANAGER_INDEX = 2;
+
+    private PasswordManagerPage passwordManager = PasswordApp.getPM();
+
     private String password;
     private PasswordLog pl;
 
@@ -27,7 +29,9 @@ public class PasswordSaver implements ActionListener {
         //System.out.println(password);
 
         if (title != null) {
+            pl = new PasswordLog(new Password(password), title);
             PasswordApp.switchTab(MANAGER_INDEX);
+            passwordManager.addLog(pl);
         }
     }
 

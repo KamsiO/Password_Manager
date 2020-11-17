@@ -3,6 +3,8 @@ package ui.gui;
 import javax.swing.*;
 
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.BorderUIResource;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
@@ -13,12 +15,18 @@ import java.awt.*;
 public class PasswordApp extends JFrame {
     private static JTabbedPane tabbedPane;
 
+    private static PasswordManagerPage passwordManager = new PasswordManagerPage();
+
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
     private static final Dimension MIN_SIZE = new Dimension(SCREEN_SIZE.width - (SCREEN_SIZE.width / 3),
                 SCREEN_SIZE.height - (SCREEN_SIZE.height / 3));
 
 
     public static void main(String[] args) {
+        //extract a main class, have it call new PasswordApp, PA has a call to setui
+
+
+
         //http://www.java2s.com/Tutorials/Java/Swing_How_to/JTabbedPane/Change_the_colour_of_the_JTabbedPane_header.htm
         UIManager.put("TabbedPane.contentBorderInsets", new InsetsUIResource(1, 0,
                 0, 0));
@@ -31,6 +39,7 @@ public class PasswordApp extends JFrame {
 //        int fontSize = optionPaneSize.width;
 //        UIManager.put("OptionPane.font", new Font("", Font.PLAIN, 100));
 
+
         new PasswordApp();
     }
 
@@ -40,6 +49,10 @@ public class PasswordApp extends JFrame {
 
     public static void switchTab(int index) {
         tabbedPane.setSelectedIndex(index);
+    }
+
+    public static PasswordManagerPage getPM() {
+        return passwordManager;
     }
 
     private void initializeGraphics() {
@@ -52,9 +65,6 @@ public class PasswordApp extends JFrame {
         //ImageIcon icon = new ImageIcon("");
         //frame.setIconImage(icon.getImage());
         setLocationRelativeTo(null);
-
-//        setLayout(new GridBagLayout());
-//        GridBagConstraints c = new GridBagConstraints();
 
         addTabs(getContentPane());
         //add(navigateRight, BorderLayout.EAST);
@@ -69,7 +79,7 @@ public class PasswordApp extends JFrame {
     private void addTabs(Container pane) {
         JPanel tab1 = new GeneratePasswordPage();
         JPanel tab2 = new CheckStrengthPage();
-        JPanel tab3 = new CheckStrengthPage();
+        JPanel tab3 = passwordManager;
 
         tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Generate", null, tab1,
@@ -84,7 +94,6 @@ public class PasswordApp extends JFrame {
         //https://stackoverflow.com/questions/9052784/set-size-of-tab-in-jtabbedpane
         JLabel label1 = new JLabel("Generate");
         label1.setFont(new Font("", Font.PLAIN, 40));
-        //lab.setPreferredSize(new Dimension(150, 70));
         tabbedPane.setTabComponentAt(0, label1);
 
         JLabel label2 = new JLabel("Check");
@@ -95,6 +104,17 @@ public class PasswordApp extends JFrame {
         label3.setFont(new Font("", Font.PLAIN, 40));
         tabbedPane.setTabComponentAt(2, label3);
 
+        setupChangeDetection();
+
         pane.add(tabbedPane);
+    }
+
+    private void setupChangeDetection() {
+        //https://stackoverflow.com/questions/15494878/how-to-call-a-certain-function-when-click-on-a-tab-in-java/15495053
+        tabbedPane.addChangeListener(e -> {
+            if (tabbedPane.getSelectedIndex() == 2) {
+                passwordManager.checkShouldLoad();
+            }
+        });
     }
 }
