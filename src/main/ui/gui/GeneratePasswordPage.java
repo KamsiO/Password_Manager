@@ -6,13 +6,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Responsible for the password generation section of the gui
+ * The JPanel responsible for the password generation section of the gui
  */
 
 public class GeneratePasswordPage extends JPanel {
@@ -34,20 +33,33 @@ public class GeneratePasswordPage extends JPanel {
 
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
+    // EFFECTS: creates a password generator page
     public GeneratePasswordPage() {
         saver = new PasswordSaver();
         initializeGraphics();
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates a strong password and shows the password on a new page
+    public void generate() {
+        Password pw = new Password();
+        pw.generateStrongPassword();
+        password = pw.getPassword();
+
+        saver.setPassword(password);
+
+        doTransition();
+    }
+
     //EFFECTS: adds the start page of the password generation section to the JPanel
-    public void initializeGraphics() {
+    private void initializeGraphics() {
         setLayout(new CardLayout(0, 0));
         add(makeStartPage(), "start");
     }
 
     //MODIFIES: this
     //EFFECTS: creates the start page and adds associated components to the page
-    public JPanel makeStartPage() {
+    private JPanel makeStartPage() {
         page1 = new JPanel();
         page1.setBackground(new Color(48,48,48));
 
@@ -72,7 +84,7 @@ public class GeneratePasswordPage extends JPanel {
 
     //MODIFIES: this
     //EFFECTS: creates the page that shows the password and adds associated components to the page
-    public JPanel makeGeneratedPage() {
+    private JPanel makeGeneratedPage() {
         page2 = new JPanel();
         page2.setBackground(Color.BLACK);
 
@@ -99,18 +111,6 @@ public class GeneratePasswordPage extends JPanel {
         placeButtons();
 
         return page2;
-    }
-
-    // MODIFIES: this
-    // EFFECTS: generates a strong password and shows the password on a new page
-    public void generate() {
-        Password pw = new Password();
-        pw.generateStrongPassword();
-        password = pw.getPassword();
-
-        saver.setPassword(password);
-
-        doTransition();
     }
 
     // MODIFIES: this
@@ -143,52 +143,48 @@ public class GeneratePasswordPage extends JPanel {
 
     // MODIFIES: this
     // EFFECTS: copies the password to clipboard, and changes the text of the copy button
-    ActionListener copyToClipboard = new ActionListener() {
-        //https://stackoverflow.com/questions/6710350/copying-text-to-the-clipboard-using-java
-        public void actionPerformed(ActionEvent evt) {
-            StringSelection stringSelection = new StringSelection(password);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
+    //https://stackoverflow.com/questions/6710350/copying-text-to-the-clipboard-using-java
+    private void copyToClipboard() {
+        StringSelection stringSelection = new StringSelection(password);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
 
-            copyBtn.setText("Copied!");
+        copyBtn.setText("Copied!");
 
-            ActionListener changeCopyBtnText = evt1 -> {
-                copyBtn.setText("Copy to Clipboard?");
-                timer.stop();
-            };
+        ActionListener changeCopyBtnText = evt1 -> {
+            copyBtn.setText("Copy to Clipboard?");
+            timer.stop();
+        };
 
-            timer = new Timer(2000, changeCopyBtnText);
-            timer.start();
-        }
-    };
+        timer = new Timer(2000, changeCopyBtnText);
+        timer.start();
+    }
 
     // MODIFIES: this
     // EFFECTS: changes the password label to a new strong password
-    ActionListener reGenerate = new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-            Password pw = new Password();
-            pw.generateStrongPassword();
-            password = pw.getPassword();
-            saver.setPassword(password);
+    private void reGenerate() {
+        Password pw = new Password();
+        pw.generateStrongPassword();
+        password = pw.getPassword();
+        saver.setPassword(password);
 
-            ActionListener changeLabelText = evt1 -> {
-                if (alphaChange > 255) {
-                    timer.stop();
-                    passwordLabel.setText(password);
-                    passwordLabel.setForeground(Color.WHITE);
-                    return;
-                }
-                int alpha = 255 - alphaChange;
-                passwordLabel.setForeground(new Color(255, 255, 255, alpha));
-                repaint();
-                alphaChange += 20;
-            };
+        ActionListener changeLabelText = evt1 -> {
+            if (alphaChange > 255) {
+                timer.stop();
+                passwordLabel.setText(password);
+                passwordLabel.setForeground(Color.WHITE);
+                return;
+            }
+            int alpha = 255 - alphaChange;
+            passwordLabel.setForeground(new Color(255, 255, 255, alpha));
+            repaint();
+            alphaChange += 20;
+        };
 
-            timer = new Timer(20, changeLabelText);
-            alphaChange = 55;
-            timer.start();
-        }
-    };
+        timer = new Timer(20, changeLabelText);
+        alphaChange = 55;
+        timer.start();
+    }
 
     // EFFECTS: switches from the start page to the page that shows the password
     private void changePage() {
@@ -224,14 +220,14 @@ public class GeneratePasswordPage extends JPanel {
         retry.setForeground(new Color(150, 150, 150));
         retry.setBackground(new Color(40, 40, 40));
         retry.setFocusable(false);
-        retry.addActionListener(reGenerate);
+        retry.addActionListener(evt -> reGenerate());
 
         copyBtn = new JButton("Copy to Clipboard?");
         copyBtn.setFont(new Font("", Font.ITALIC, 40));
         copyBtn.setForeground(new Color(150, 150, 150));
         copyBtn.setBackground(new Color(40, 40, 40));
         copyBtn.setFocusable(false);
-        copyBtn.addActionListener(copyToClipboard);
+        copyBtn.addActionListener(evt -> copyToClipboard());
 
         JButton save = new JButton("Save Password?");
         save.setFont(new Font("", Font.ITALIC, 40));

@@ -7,6 +7,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controls the creation of password logs
+ */
+
 public class PasswordSaver implements ActionListener {
     private static final int MANAGER_INDEX = 2;
 
@@ -19,14 +23,14 @@ public class PasswordSaver implements ActionListener {
         password = p;
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates a password log with title that user inputs
     @Override
     public void actionPerformed(ActionEvent e) {
         String title = JOptionPane.showInputDialog(null,
                 "Please input title of password.",
                 "Save Password",
                 JOptionPane.PLAIN_MESSAGE);
-
-        //System.out.println(password);
 
         if (title != null) {
             pl = new PasswordLog(new Password(password), title);
@@ -35,6 +39,4 @@ public class PasswordSaver implements ActionListener {
             passwordManager.addLog(pl);
         }
     }
-
-    //public void makePl
 }

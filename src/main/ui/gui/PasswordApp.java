@@ -3,14 +3,17 @@ package ui.gui;
 import javax.swing.*;
 
 import javax.swing.border.LineBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.BorderUIResource;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.InsetsUIResource;
 
 import java.awt.*;
+
+/**
+ * An app that allows user to generate passwords, save and view passwords, update stored passwords, and
+ * check the strength of passwords user types in.
+ */
 
 public class PasswordApp extends JFrame {
     private static JTabbedPane tabbedPane;
@@ -25,32 +28,14 @@ public class PasswordApp extends JFrame {
 
     private static final int MANAGER_INDEX = 2;
 
-
-    public static void main(String[] args) {
-        //extract a main class, have it call new PasswordApp, PA has a call to setui
-
-
-
-        //http://www.java2s.com/Tutorials/Java/Swing_How_to/JTabbedPane/Change_the_colour_of_the_JTabbedPane_header.htm
-        UIManager.put("TabbedPane.contentBorderInsets", new InsetsUIResource(1, 0,
-                0, 0));
-        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource(Color.LIGHT_GRAY));
-        UIManager.put("ToolTip.background", Color.WHITE);
-        UIManager.put("ToolTip.border", new BorderUIResource(new LineBorder(Color.BLACK)));
-        UIManager.put("ToolTip.font", new FontUIResource(new Font("", Font.PLAIN, 30)));
-//        Dimension optionPaneSize = new Dimension(MIN_SIZE.width / 3, MIN_SIZE.height / 5);
-//        UIManager.put("OptionPane.minimumSize", optionPaneSize);
-//        int fontSize = optionPaneSize.width;
-//        UIManager.put("OptionPane.font", new Font("", Font.PLAIN, 100));
-
-
-        new PasswordApp();
-    }
-
+    // EFFECTS: changes the UI look and creates a password app frame with three tabs
     public PasswordApp() {
+        setLookAndFeel();
         initializeGraphics();
     }
 
+    // MODIFIES: this
+    // EFFECTS: changes the current tab showing to the tab at index index
     public static void switchTab(int index) {
         tabbedPane.setSelectedIndex(index);
     }
@@ -67,27 +52,23 @@ public class PasswordApp extends JFrame {
         return checkerPage;
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates a JFrame with 3 tabs
     private void initializeGraphics() {
         setTitle("Password Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setMinimumSize(MIN_SIZE);
 
-        //setResizable(false);
-        //ImageIcon icon = new ImageIcon("");
-        //frame.setIconImage(icon.getImage());
         setLocationRelativeTo(null);
 
         addTabs(getContentPane());
-        //add(navigateRight, BorderLayout.EAST);
 
-        //setComponentZOrder(navigateRight, 1);
-        //setComponentZOrder(pages, 0);
-
-        //pack();
         setVisible(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates the JPanel tabs, a generator tab, a strength checker tab, and a password manager tab
     private void addTabs(Container pane) {
         JPanel tab1 = generatorPage;
         JPanel tab2 = checkerPage;
@@ -121,6 +102,19 @@ public class PasswordApp extends JFrame {
         pane.add(tabbedPane);
     }
 
+    // EFFECTS: modifies the ui look and feel
+    private void setLookAndFeel() {
+        //http://www.java2s.com/Tutorials/Java/Swing_How_to/JTabbedPane/Change_the_colour_of_the_JTabbedPane_header.htm
+        UIManager.put("TabbedPane.contentBorderInsets", new InsetsUIResource(1, 0,
+                0, 0));
+        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource(Color.LIGHT_GRAY));
+        UIManager.put("ToolTip.background", Color.WHITE);
+        UIManager.put("ToolTip.border", new BorderUIResource(new LineBorder(Color.BLACK)));
+        UIManager.put("ToolTip.font", new FontUIResource(new Font("", Font.PLAIN, 30)));
+    }
+
+    // MODIFIES: this
+    // EFFECTS: gives this the ability to detect if the user switches to the password manager tab
     private void setupChangeDetection() {
         //https://stackoverflow.com/questions/15494878/how-to-call-a-certain-function-when-click-on-a-tab-in-java/15495053
         tabbedPane.addChangeListener(e -> {

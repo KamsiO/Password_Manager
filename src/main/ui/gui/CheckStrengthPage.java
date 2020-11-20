@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Responsible for the password strength checker section of the gui
+ * The JPanel responsible for the password strength checker section of the gui
  */
 
-public class CheckStrengthPage extends JPanel implements ActionListener {
+public class CheckStrengthPage extends JPanel {
     private JPanel page1;
     private JPanel page2;
 
@@ -31,20 +31,28 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
 
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
+    // EFFECTS: creates a password strength check page
     public CheckStrengthPage() {
         saver = new PasswordSaver();
         initializeGraphics();
     }
 
+    // EFFECTS: switches pages back to the start page
+    public void changePageToStart() {
+        add(makeStartPage(), "start");
+        CardLayout cl = (CardLayout)(getLayout());
+        cl.show(this, "start");
+    }
 
-    public void initializeGraphics() {
+    // EFFECTS: makes the start page and adds it to the layout
+    private void initializeGraphics() {
         setLayout(new CardLayout(0, 0));
         add(makeStartPage(), "start");
     }
 
     //MODIFIES: this
     //EFFECTS: creates the start page and adds associated components to the page
-    public JPanel makeStartPage() {
+    private JPanel makeStartPage() {
         page1 = new JPanel();
         page1.setBackground(new Color(135, 135, 135));
 
@@ -74,7 +82,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
 
     //MODIFIES: this
     //EFFECTS: creates the page that shows the password and adds associated components to the page
-    public JPanel makeStrengthPage() {
+    private JPanel makeStrengthPage() {
         page2 = new JPanel();
         page2.setBackground(new Color(235, 235, 235));
 
@@ -90,12 +98,10 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         strength.setFont(new Font("", Font.BOLD, SCREEN_SIZE.width / 44));
 
         c.insets = new Insets(0, 0, 20, 20);
-        //c.gridx = 0;
         c.gridy = 0;
         page2.add(msg, c);
 
         c.insets = new Insets(0, msg.getWidth() + 10, 20, 0);
-        //c.gridx = 0;
         c.gridy = 0;
         page2.add(strength, c);
 
@@ -107,16 +113,11 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
 
 
     // MODIFIES: this
-    // EFFECTS:
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == checkBtn) {
-            password = new Password(textField.getText());
-
-            saver.setPassword(password.getPassword());
-
-            doTransitionToStrength();
-        }
+    // EFFECTS: stores password user inputted and switches to strength rating page
+    private void checkStrength() {
+        password = new Password(textField.getText());
+        saver.setPassword(password.getPassword());
+        doTransitionToStrength();
     }
 
     // MODIFIES: this
@@ -172,18 +173,13 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
     }
 
 
-    // EFFECTS:
+    // EFFECTS: switches pages to the strength rating page
     private void changePageToStrength() {
         add(makeStrengthPage(), "strength");
         CardLayout cl = (CardLayout)(getLayout());
         cl.show(this, "strength");
     }
 
-    public void changePageToStart() {
-        add(makeStartPage(), "start");
-        CardLayout cl = (CardLayout)(getLayout());
-        cl.show(this, "start");
-    }
 
     // EFFECTS: creates the label on the start page
     private JLabel makeStartPageLabel() {
@@ -202,7 +198,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         checkBtn.setForeground(Color.WHITE);
         checkBtn.setFocusable(false);
         checkBtn.setEnabled(false);
-        checkBtn.addActionListener(this);
+        checkBtn.addActionListener(evt -> checkStrength());
     }
 
     // EFFECTS: creates the text field for the password on the start page and assigns it a key listener
@@ -230,14 +226,11 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         GridBagConstraints constraintsForBtns = new GridBagConstraints();
 
         constraintsForBtns.insets = new Insets(SCREEN_SIZE.height / 15, -SCREEN_SIZE.width / 9, 0, 5);
-        //constraintsForBtns.gridx = 1;
         constraintsForBtns.gridy = 6;
         constraintsForBtns.ipady = SCREEN_SIZE.width / 70;
         constraintsForBtns.ipadx = SCREEN_SIZE.width / 25;
-        //constraintsForBtns.weightx = 0.8;
         page2.add(buttons.get(0), constraintsForBtns);
 
-        //constraintsForBtns.gridx = 3;
         constraintsForBtns.insets = new Insets(SCREEN_SIZE.height / 15, -SCREEN_SIZE.width / 11, 0, 5);
         page2.add(buttons.get(1), constraintsForBtns);
     }
@@ -250,7 +243,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         checkAgain.setForeground(new Color(97, 94, 110));
         checkAgain.setBackground(new Color(215, 215, 215));
         checkAgain.setFocusable(false);
-        checkAgain.addActionListener(checkStrengthAgain);
+        checkAgain.addActionListener(evt -> doTransitionToStart());
 
         JButton save = new JButton("Save Password?");
         save.setFont(new Font("", Font.ITALIC, 40));
@@ -266,12 +259,13 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         return buttons;
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds the requirement labels to the strength rating page
     private void placeRequirements() {
         List<JLabel> labels = makeRequirements();
         GridBagConstraints c = new GridBagConstraints();
 
         c.insets = new Insets(25, 0, 0, 0);
-        //c.gridx = 0;
         c.gridy = 1;
         page2.add(labels.get(0), c);
 
@@ -289,6 +283,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         page2.add(labels.get(4), c);
     }
 
+    // EFFECTS: makes the requirement labels
     private List<JLabel> makeRequirements() {
         String[] reqNames = {"Length is 8 or more characters:",
                 "Has at least one lowercase character:",
@@ -310,6 +305,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         return labels;
     }
 
+    // EFFECTS: returns an icon bases on whether the password meets the requirement at index index
     private ImageIcon meetsRequirement(int index) {
         ImageIcon image;
         if (password.getPasswordStrength().get(index)) {
@@ -320,6 +316,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
         return image;
     }
 
+    // EFFECTS: returns a color based on the strength rating of a password
     private Color setStrengthColor() {
         if (password.getPasswordStrengthRating().equals("Strong")) {
             return new Color(56, 212, 51);
@@ -329,7 +326,5 @@ public class CheckStrengthPage extends JPanel implements ActionListener {
             return new Color(245, 17, 17);
         }
     }
-
-    ActionListener checkStrengthAgain = evt -> doTransitionToStart();
 }
 

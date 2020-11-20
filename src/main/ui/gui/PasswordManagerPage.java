@@ -8,20 +8,20 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The JPanel that shows and controls all features related to the password manager.
+ */
 
 public class PasswordManagerPage extends JPanel {
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
     private PasswordManager pm;
     private List<PasswordLogContainer> logs;
-    //private JPanel logDisplayArea;
     private JPanel passwordContainer;
 
     private JPanel mainPage;
@@ -36,12 +36,15 @@ public class PasswordManagerPage extends JPanel {
     private static final int GENERATE_INDEX = 0;
     private static final int INPUT_INDEX = 1;
 
+    // EFFECTS: creates a new password manager page and sets up its save and load features
     public PasswordManagerPage() {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         visited = false;
     }
 
+    // MODIFIES: this
+    // EFFECTS: checks if saved passwords should be loaded when user first visits this
     public void checkShouldLoad() {
         if (!visited) {
             try {
@@ -49,7 +52,7 @@ public class PasswordManagerPage extends JPanel {
                 int load = 1;
                 if (loaded.getPasswordLogs().size() > 0) {
                     load = JOptionPane.showConfirmDialog(null,
-                            "Would you like to load saved passwords? Choosing no then saving later will overwrite previously saved passwords.",
+                            "Load saved passwords? Choosing no then saving overwrites previously saved passwords.",
                             "Load?",
                             JOptionPane.YES_NO_OPTION);
                 }
@@ -68,13 +71,27 @@ public class PasswordManagerPage extends JPanel {
         }
     }
 
-    public void addLog(PasswordLog log) {
-        pm.addPasswordLog(log, log.getTitle());
-        savePasswordManager("add", log, "", "");
-        //https://stackoverflow.com/questions/2510159/can-i-add-a-component-to-a-specific-grid-cell-when-a-gridlayout-is-used
-        passwordContainer.add(new PasswordLogContainer(log), 0, 0);
+    // MODIFIES: this, PasswordManager
+    // EFFECTS: adds password log log to the password manager if a password with that name does not already exist
+    public boolean addLog(PasswordLog log) {
+        boolean added = pm.addPasswordLog(log, log.getTitle());
+        if (added) {
+            savePasswordManager("add", log, "", "");
+            //https://stackoverflow.com/questions/2510159/can-i-add-a-component-to-a-specific-grid-cell-when-a-gridlayout-is-used
+            passwordContainer.add(new PasswordLogContainer(log), 0, 0);
+            return true;
+        } else {
+            JOptionPane.showConfirmDialog(null,
+                    "A password with that title already exists. Please use another name.",
+                    "Warning!",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
     }
 
+    // MODIFIES: this, PasswordManager
+    // EFFECTS: deletes password log log
     public void deleteLog(PasswordLogContainer log) {
         savePasswordManager("delete", log.getLog(), "", "");
         pm.deletePasswordLog(log.getLog().getTitle());
@@ -82,6 +99,9 @@ public class PasswordManagerPage extends JPanel {
         repaint();
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates a password log page with info from the the selected password container container then
+    //          switches to that page
     public void viewLog(PasswordLogContainer container) {
         logPage = new PasswordLogPage(container);
         add(logPage, "log");
@@ -90,12 +110,32 @@ public class PasswordManagerPage extends JPanel {
         cl.show(this, "log");
     }
 
+    // EFFECTS: switches page view back to password manager page
     public void closeLog() {
         CardLayout cl = (CardLayout)(getLayout());
         cl.show(this, "main");
     }
 
+    public PasswordManager getPm() {
+        return pm;
+    }
 
+    // MODIFIES: PasswordManager
+    // EFFECTS: saves password manager to json
+    public void savePasswordManager(String function, PasswordLog pl, String info, String value) {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(pm, function, pl, info, value);
+            jsonWriter.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        } catch (ObjectNotFoundException e) {
+            System.out.println("Unable to save changes.");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS:
     private void initializeLogs() {
         logs = new ArrayList<>();
         for (PasswordLog pl : pm.getPasswordLogs()) {
@@ -103,6 +143,8 @@ public class PasswordManagerPage extends JPanel {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates and add the components for the password manager page
     private void initializeGraphics() {
         setLayout(new CardLayout(0, 0));
 
@@ -119,16 +161,19 @@ public class PasswordManagerPage extends JPanel {
         add(mainPage, "main");
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates and adds the area where saved passwords are displayed
     private void displayLogs() {
         JPanel logDisplayArea = makeLogDisplayArea();
         JScrollPane scrollable = new JScrollPane(logDisplayArea);
         scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
-        //scrollable.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPage.add(scrollable);
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds saved passwords to a panel
     private JPanel makeLogDisplayArea() {
         passwordContainer = new JPanel();
         GridLayout grid = new GridLayout(0, 3);
@@ -142,18 +187,13 @@ public class PasswordManagerPage extends JPanel {
             passwordContainer.add(log);
         }
 
-//        passwordContainer.add(new PasswordLogContainer(new PasswordLog(new Password("testing978"), "gmail")));
-//        for (int i = 0; i < 3; i++) {
-//            passwordContainer.add(new PasswordLogContainer(new PasswordLog(new Password("password123"), "facebook")));
-//        }
         return passwordContainer;
     }
 
+    // EFFECTS: creates the header for the password manager page
     private JPanel makeHeader() {
         JPanel header = new JPanel();
         header.setLayout(new FlowLayout());
-        //Dimension min = new Dimension(SCREEN_SIZE.width - (SCREEN_SIZE.width / 3), SCREEN_SIZE.height / 100);
-        //header.setPreferredSize(min);
         header.setBackground(Color.WHITE);
 
         JLabel title = new JLabel("Manager   ");
@@ -166,7 +206,6 @@ public class PasswordManagerPage extends JPanel {
         search.setHorizontalAlignment(JTextField.CENTER);
         Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 26);
         search.setPreferredSize(fieldSize);
-        //search.addKeyListener(this);
         header.add(search);
 
         JButton add = new JButton("New");
@@ -180,6 +219,8 @@ public class PasswordManagerPage extends JPanel {
         return header;
     }
 
+    // MODIFIES: PasswordApp
+    // EFFECTS: switches tab to the generator or strength checker based on user input
     private void chooseAddSource() {
         int source = JOptionPane.showOptionDialog(null,
                 "Would you like to generate or input your password?",
@@ -196,18 +237,6 @@ public class PasswordManagerPage extends JPanel {
         } else if (source == 1) {
             PasswordApp.getCheckerPage().changePageToStart();
             PasswordApp.switchTab(INPUT_INDEX);
-        }
-    }
-
-    public void savePasswordManager(String function, PasswordLog pl, String info, String value) {
-        try {
-            jsonWriter.open();
-            jsonWriter.write(pm, function, pl, info, value);
-            jsonWriter.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Unable to write to file: " + JSON_STORE);
-        } catch (ObjectNotFoundException e) {
-            System.out.println("Unable to save changes.");
         }
     }
 }
