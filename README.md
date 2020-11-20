@@ -45,3 +45,7 @@ alphabetically
 - As a user, I want the application to automatically save any changes I make to my saved passwords
 - As a user, if I have any saved passwords, I want to see them immediately when the application starts
  
+#### Phase 3
+- As a user, I want the ability to quickly copy passwords to my clipboard
+- As a user, I want the option to load saved passwords
+- As a user, I want the option to save changes to a password I edit

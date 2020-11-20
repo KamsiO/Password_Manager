@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Responsible for the password generation section of the gui
  */
 
-public class GeneratePasswordPage extends JPanel implements ActionListener {
+public class GeneratePasswordPage extends JPanel {
     private JPanel page1;
     private JPanel page2;
 
@@ -103,17 +103,14 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
 
     // MODIFIES: this
     // EFFECTS: generates a strong password and shows the password on a new page
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == generateBtn) {
-            Password pw = new Password();
-            pw.generateStrongPassword();
-            password = pw.getPassword();
+    public void generate() {
+        Password pw = new Password();
+        pw.generateStrongPassword();
+        password = pw.getPassword();
 
-            saver.setPassword(password);
+        saver.setPassword(password);
 
-            doTransition();
-        }
+        doTransition();
     }
 
     // MODIFIES: this
@@ -216,7 +213,7 @@ public class GeneratePasswordPage extends JPanel implements ActionListener {
         generateBtn.setForeground(new Color(190, 190, 190));
         generateBtn.setBackground(new Color(74, 74, 74));
         generateBtn.setFocusable(false);
-        generateBtn.addActionListener(this);
+        generateBtn.addActionListener(evt -> generate());
     }
 
     // MODIFIES: this

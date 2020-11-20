@@ -1,26 +1,22 @@
 package ui.gui;
 
 import exceptions.ObjectNotFoundException;
-import model.Password;
 import model.PasswordLog;
 import model.PasswordManager;
 import persistence.JsonReader;
 import persistence.JsonWriter;
-import ui.consoleui.PasswordApp;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PasswordManagerPage extends JPanel implements ActionListener, KeyListener {
+public class PasswordManagerPage extends JPanel {
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
     private PasswordManager pm;
@@ -28,23 +24,24 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
     //private JPanel logDisplayArea;
     private JPanel passwordContainer;
 
+    private JPanel mainPage;
+    private JPanel logPage;
+
     private static final String JSON_STORE = "./data/passwordmanager.json";
     private static JsonWriter jsonWriter;
     private JsonReader jsonReader;
-
     private Boolean visited;
+
+    private final String[] saveOptions = {"Generate", "Input", "Cancel"};
+    private static final int GENERATE_INDEX = 0;
+    private static final int INPUT_INDEX = 1;
 
     public PasswordManagerPage() {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         visited = false;
-        //initializeManager();
-//        initializeLogs();
-//        initializeGraphics();
     }
 
-
-    @SuppressWarnings("checkstyle:LineLength")
     public void checkShouldLoad() {
         if (!visited) {
             try {
@@ -85,6 +82,20 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
         repaint();
     }
 
+    public void viewLog(PasswordLogContainer container) {
+        logPage = new PasswordLogPage(container);
+        add(logPage, "log");
+
+        CardLayout cl = (CardLayout)(getLayout());
+        cl.show(this, "log");
+    }
+
+    public void closeLog() {
+        CardLayout cl = (CardLayout)(getLayout());
+        cl.show(this, "main");
+    }
+
+
     private void initializeLogs() {
         logs = new ArrayList<>();
         for (PasswordLog pl : pm.getPasswordLogs()) {
@@ -93,14 +104,19 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
     }
 
     private void initializeGraphics() {
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setBackground(Color.WHITE);
+        setLayout(new CardLayout(0, 0));
+
+        mainPage = new JPanel();
+        mainPage.setLayout(new BoxLayout(mainPage, BoxLayout.PAGE_AXIS));
+        mainPage.setBackground(Color.WHITE);
 
         JPanel header = makeHeader();
-        add(header);
-        add(Box.createRigidArea(new Dimension(0,40)));
+        mainPage.add(header);
+        mainPage.add(Box.createRigidArea(new Dimension(0,40)));
 
         displayLogs();
+
+        add(mainPage, "main");
     }
 
     private void displayLogs() {
@@ -110,7 +126,7 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
         scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
         //scrollable.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(scrollable);
+        mainPage.add(scrollable);
     }
 
     private JPanel makeLogDisplayArea() {
@@ -130,7 +146,6 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
 //        for (int i = 0; i < 3; i++) {
 //            passwordContainer.add(new PasswordLogContainer(new PasswordLog(new Password("password123"), "facebook")));
 //        }
-
         return passwordContainer;
     }
 
@@ -141,7 +156,7 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
         //header.setPreferredSize(min);
         header.setBackground(Color.WHITE);
 
-        JLabel title = new JLabel("Manager");
+        JLabel title = new JLabel("Manager   ");
         title.setForeground(Color.BLACK);
         title.setFont(new Font("", Font.BOLD, SCREEN_SIZE.width / 25));
         header.add(title);
@@ -149,18 +164,39 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
         JTextField search = new JTextField();
         search.setFont(new Font("", Font.PLAIN, 50));
         search.setHorizontalAlignment(JTextField.CENTER);
-        Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 27);
+        Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 26);
         search.setPreferredSize(fieldSize);
-        search.addKeyListener(this);
+        //search.addKeyListener(this);
         header.add(search);
 
         JButton add = new JButton("New");
         add.setBackground(new Color(145, 242, 241));
         add.setPreferredSize(new Dimension(fieldSize.height + 70, fieldSize.height));
+        add.setFont(new Font("", Font.ITALIC, 30));
         add.setForeground(Color.BLACK);
+        add.addActionListener(evt -> chooseAddSource());
         header.add(add);
 
         return header;
+    }
+
+    private void chooseAddSource() {
+        int source = JOptionPane.showOptionDialog(null,
+                "Would you like to generate or input your password?",
+                "New Password",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                saveOptions,
+                0);
+
+        if (source == 0) {
+            PasswordApp.getGeneratorPage().generate();
+            PasswordApp.switchTab(GENERATE_INDEX);
+        } else if (source == 1) {
+            PasswordApp.getCheckerPage().changePageToStart();
+            PasswordApp.switchTab(INPUT_INDEX);
+        }
     }
 
     public void savePasswordManager(String function, PasswordLog pl, String info, String value) {
@@ -173,25 +209,5 @@ public class PasswordManagerPage extends JPanel implements ActionListener, KeyLi
         } catch (ObjectNotFoundException e) {
             System.out.println("Unable to save changes.");
         }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
     }
 }

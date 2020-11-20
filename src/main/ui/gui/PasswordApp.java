@@ -16,10 +16,14 @@ public class PasswordApp extends JFrame {
     private static JTabbedPane tabbedPane;
 
     private static PasswordManagerPage passwordManager = new PasswordManagerPage();
+    private static GeneratePasswordPage generatorPage = new GeneratePasswordPage();
+    private static CheckStrengthPage checkerPage = new CheckStrengthPage();
 
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
     private static final Dimension MIN_SIZE = new Dimension(SCREEN_SIZE.width - (SCREEN_SIZE.width / 3),
                 SCREEN_SIZE.height - (SCREEN_SIZE.height / 3));
+
+    private static final int MANAGER_INDEX = 2;
 
 
     public static void main(String[] args) {
@@ -55,6 +59,14 @@ public class PasswordApp extends JFrame {
         return passwordManager;
     }
 
+    public static GeneratePasswordPage getGeneratorPage() {
+        return generatorPage;
+    }
+
+    public static CheckStrengthPage getCheckerPage() {
+        return checkerPage;
+    }
+
     private void initializeGraphics() {
         setTitle("Password Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,8 +89,8 @@ public class PasswordApp extends JFrame {
     }
 
     private void addTabs(Container pane) {
-        JPanel tab1 = new GeneratePasswordPage();
-        JPanel tab2 = new CheckStrengthPage();
+        JPanel tab1 = generatorPage;
+        JPanel tab2 = checkerPage;
         JPanel tab3 = passwordManager;
 
         tabbedPane = new JTabbedPane();
@@ -112,7 +124,7 @@ public class PasswordApp extends JFrame {
     private void setupChangeDetection() {
         //https://stackoverflow.com/questions/15494878/how-to-call-a-certain-function-when-click-on-a-tab-in-java/15495053
         tabbedPane.addChangeListener(e -> {
-            if (tabbedPane.getSelectedIndex() == 2) {
+            if (tabbedPane.getSelectedIndex() == MANAGER_INDEX) {
                 passwordManager.checkShouldLoad();
             }
         });

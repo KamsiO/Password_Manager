@@ -133,7 +133,8 @@ public class PasswordManager implements Writable {
         JSONArray logs = json.getJSONArray("passwordLogs");
         for (int i = 0; i < logs.length(); i++) {
             JSONObject log = logs.getJSONObject(i);
-            if (log.getString("title").equals(pl.getTitle())) {
+            if (log.getString("title").equals(pl.getTitle())
+                    && log.getString("password").equals(pl.getPassword().getPassword())) {
                 deleteIndex = i;
                 foundObject = true;
                 break;
@@ -157,7 +158,8 @@ public class PasswordManager implements Writable {
         JSONObject toUpdate = null;
         for (int i = 0; i < logs.length(); i++) {
             JSONObject log = logs.getJSONObject(i);
-            if (log.getString("title").equals(pl.getTitle())) {
+            if (log.getString("title").equals(pl.getTitle())
+                    && log.getString("password").equals(pl.getPassword().getPassword())) {
                 toUpdate = log;
                 break;
             }

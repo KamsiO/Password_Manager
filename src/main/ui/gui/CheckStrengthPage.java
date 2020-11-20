@@ -4,10 +4,7 @@ import model.Password;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -15,7 +12,7 @@ import java.util.ArrayList;
  * Responsible for the password strength checker section of the gui
  */
 
-public class CheckStrengthPage extends JPanel implements ActionListener, KeyListener {
+public class CheckStrengthPage extends JPanel implements ActionListener {
     private JPanel page1;
     private JPanel page2;
 
@@ -182,7 +179,7 @@ public class CheckStrengthPage extends JPanel implements ActionListener, KeyList
         cl.show(this, "strength");
     }
 
-    private void changePageToStart() {
+    public void changePageToStart() {
         add(makeStartPage(), "start");
         CardLayout cl = (CardLayout)(getLayout());
         cl.show(this, "start");
@@ -216,7 +213,14 @@ public class CheckStrengthPage extends JPanel implements ActionListener, KeyList
         Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 27);
         textField.setPreferredSize(fieldSize);
 
-        textField.addKeyListener(this);
+        textField.addKeyListener(new KeyAdapter() {
+            @Override
+            // MODIFIES: this
+            // EFFECTS: enables the check button when user starts typing in the text field
+            public void keyReleased(KeyEvent e) {
+                checkBtn.setEnabled(textField.getText().length() > 0);
+            }
+        });
     }
 
     // MODIFIES: this
@@ -327,22 +331,5 @@ public class CheckStrengthPage extends JPanel implements ActionListener, KeyList
     }
 
     ActionListener checkStrengthAgain = evt -> doTransitionToStart();
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        //do nothing
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        //do nothing
-    }
-
-    // MODIFIES: this
-    // EFFECTS: enables the check button when user starts typing in the text field
-    @Override
-    public void keyReleased(KeyEvent e) {
-        checkBtn.setEnabled(textField.getText().length() > 0);
-    }
 }
 
