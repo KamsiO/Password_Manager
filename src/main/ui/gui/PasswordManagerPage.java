@@ -353,7 +353,8 @@ public class PasswordManagerPage extends JPanel {
     // EFFECTS: clears the search by setting the search button, search bar, and displayed logs back to normal
     private void clearSearch() {
         mainPage.remove(scrollable);
-        scrollable = new JScrollPane(passwordContainer);
+        initializeLogs();
+        scrollable = new JScrollPane(makeLogDisplayArea());
         scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
