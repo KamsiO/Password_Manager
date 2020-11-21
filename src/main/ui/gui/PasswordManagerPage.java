@@ -8,6 +8,8 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,18 +21,25 @@ import java.util.List;
 
 public class PasswordManagerPage extends JPanel {
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
+    private static final Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 26);
 
     private PasswordManager pm;
     private List<PasswordLogContainer> logs;
-    private JPanel passwordContainer;
 
     private JPanel mainPage;
     private JPanel logPage;
+
+    private JScrollPane scrollable;
+    private JPanel passwordContainer;
+    private JTextField search;
+    private JButton searchButton;
+    private JPanel searchedPasswordContainer;
 
     private static final String JSON_STORE = "./data/passwordmanager.json";
     private static JsonWriter jsonWriter;
     private JsonReader jsonReader;
     private Boolean visited;
+    private Boolean searched;
 
     private final String[] saveOptions = {"Generate", "Input", "Cancel"};
     private static final int GENERATE_INDEX = 0;
@@ -41,6 +50,7 @@ public class PasswordManagerPage extends JPanel {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         visited = false;
+        searched = false;
     }
 
     // MODIFIES: this
@@ -135,7 +145,7 @@ public class PasswordManagerPage extends JPanel {
     }
 
     // MODIFIES: this
-    // EFFECTS:
+    // EFFECTS: creates a list of password log containers from the password logs that user has loaded
     private void initializeLogs() {
         logs = new ArrayList<>();
         for (PasswordLog pl : pm.getPasswordLogs()) {
@@ -165,7 +175,7 @@ public class PasswordManagerPage extends JPanel {
     // EFFECTS: creates and adds the area where saved passwords are displayed
     private void displayLogs() {
         JPanel logDisplayArea = makeLogDisplayArea();
-        JScrollPane scrollable = new JScrollPane(logDisplayArea);
+        scrollable = new JScrollPane(logDisplayArea);
         scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
@@ -196,17 +206,16 @@ public class PasswordManagerPage extends JPanel {
         header.setLayout(new FlowLayout());
         header.setBackground(Color.WHITE);
 
-        JLabel title = new JLabel("Manager   ");
+        JLabel title = new JLabel("Manager  ");
         title.setForeground(Color.BLACK);
         title.setFont(new Font("", Font.BOLD, SCREEN_SIZE.width / 25));
         header.add(title);
 
-        JTextField search = new JTextField();
-        search.setFont(new Font("", Font.PLAIN, 50));
-        search.setHorizontalAlignment(JTextField.CENTER);
-        Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 26);
-        search.setPreferredSize(fieldSize);
+        makeSearchField();
         header.add(search);
+
+        makeSearchButton();
+        header.add(searchButton);
 
         JButton add = new JButton("New");
         add.setBackground(new Color(145, 242, 241));
@@ -217,6 +226,48 @@ public class PasswordManagerPage extends JPanel {
         header.add(add);
 
         return header;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates the text field responsible for searching through passwords
+    private void makeSearchField() {
+        search = new JTextField();
+        search.setFont(new Font("", Font.PLAIN, 50));
+        search.setHorizontalAlignment(JTextField.CENTER);
+        search.setPreferredSize(fieldSize);
+        search.addKeyListener(new KeyAdapter() {
+            @Override
+            // MODIFIES: this
+            // EFFECTS: enables the search button when user starts typing in the text field
+            public void keyReleased(KeyEvent e) {
+                searchButton.setEnabled(search.getText().length() > 0);
+            }
+        });
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates the button responsible for searching through passwords
+    private void makeSearchButton() {
+        searchButton = new JButton();
+        searchButton.setFocusable(false);
+        searchButton.setBackground(Color.WHITE);
+        searchButton.setEnabled(false);
+        setSearchIcon();
+        Dimension fieldSize = new Dimension(SCREEN_SIZE.width / 3, SCREEN_SIZE.height / 26);
+        searchButton.setPreferredSize((new Dimension(fieldSize.height + 30, fieldSize.height)));
+        searchButton.addActionListener(evt -> handleSearch());
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets the icon of the search button based on whether the user is searching
+    private void setSearchIcon() {
+        ImageIcon image;
+        if (searched) {
+            image = new ImageIcon("data/x.png");
+        } else {
+            image = new ImageIcon("data/search.png");
+        }
+        searchButton.setIcon(image);
     }
 
     // MODIFIES: PasswordApp
@@ -238,5 +289,83 @@ public class PasswordManagerPage extends JPanel {
             PasswordApp.getCheckerPage().changePageToStart();
             PasswordApp.switchTab(INPUT_INDEX);
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: if user has not searched before, shows search, otherwise clears current search
+    private void handleSearch() {
+        if (searched) {
+            clearSearch();
+        } else {
+            search();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: shows the password logs that have titles that contain the string in search bar or none
+    private void search() {
+        List<PasswordLog> searched = pm.searchPasswords(search.getText());
+        searchedPasswordContainer = new JPanel();
+        searchedPasswordContainer.setBackground(Color.WHITE);
+        if (searched.size() == 0) {
+            JLabel msg = new JLabel("No passwords with that name were found.");
+            msg.setFont(new Font("", Font.ITALIC, 50));
+            searchedPasswordContainer.add(msg);
+        } else {
+            List<PasswordLogContainer> containers = new ArrayList<>();
+            for (PasswordLog log : searched) {
+                containers.add(new PasswordLogContainer(log));
+            }
+            GridLayout grid = new GridLayout(0, 3);
+            grid.setHgap(SCREEN_SIZE.width / 50);
+            grid.setVgap(SCREEN_SIZE.height / 45);
+            searchedPasswordContainer.setLayout(grid);
+            searchedPasswordContainer.setBackground(Color.WHITE);
+            searchedPasswordContainer.setBorder(BorderFactory.createEmptyBorder(50, 100, 80, 100));
+
+            for (PasswordLogContainer log : containers) {
+                searchedPasswordContainer.add(log);
+            }
+        }
+        showSearch(searchedPasswordContainer);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: changes the scroll panel to show only the password logs that were queried, if any
+    private void showSearch(JPanel panel) {
+        mainPage.remove(scrollable);
+
+        scrollable = new JScrollPane(panel);
+        scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
+        mainPage.add(scrollable);
+
+        searched = true;
+        search.setEnabled(false);
+        setSearchIcon();
+
+        repaint();
+        revalidate();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: clears the search by setting the search button, search bar, and displayed logs back to normal
+    private void clearSearch() {
+        mainPage.remove(scrollable);
+        scrollable = new JScrollPane(passwordContainer);
+        scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
+        mainPage.add(scrollable);
+
+        searched = false;
+        search.setText("");
+        searchButton.setEnabled(false);
+        search.setEnabled(true);
+        setSearchIcon();
+
+        repaint();
+        revalidate();
     }
 }

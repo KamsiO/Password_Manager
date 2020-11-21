@@ -8,6 +8,8 @@ import persistence.Writable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A representation of a collection of stored passwords. New passwords can be stored, and previously stored passwords
@@ -100,6 +102,23 @@ public class PasswordManager implements Writable {
         }
 
         return plTitles;
+    }
+
+    // EFFECTS: returns list of password logs with titles that contain given string query
+    public List<PasswordLog> searchPasswords(String query) {
+        //https://www.geeksforgeeks.org/trim-remove-leading-trailing-spaces-string-java/
+        Pattern pattern = Pattern.compile(query.toLowerCase().trim());
+        Matcher matcher;
+
+        List<PasswordLog> logs = new ArrayList<>();
+
+        for (PasswordLog log : passwordLogs) {
+            matcher = pattern.matcher(log.getTitle().toLowerCase());
+            if (matcher.find()) {
+                logs.add(log);
+            }
+        }
+        return logs;
     }
 
     // EFFECTS: returns password logs in password manager

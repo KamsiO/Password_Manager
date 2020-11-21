@@ -126,4 +126,46 @@ public class PasswordManagerTest {
         assertEquals("Apple ID", passwords.get(1));
         assertEquals("Amazon", passwords.get(2));
     }
+
+    @Test
+    public void searchPasswordsManyFound() {
+        Password pw1 = new Password();
+        Password pw2 = new Password();
+        Password pw3 = new Password();
+        pm.addPasswordLog(pw1, "Microsoft");
+        pm.addPasswordLog(pw2, "Apple ID");
+        pm.addPasswordLog(pw3, "Amazon");
+
+        List<PasswordLog> searched = pm.searchPasswords("a");
+        assertEquals(2, searched.size());
+        assertEquals(searched.get(0).getTitle(), "Amazon");
+        assertEquals(searched.get(1).getTitle(), "Apple ID");
+    }
+
+    @Test
+    public void searchPasswordsMessyQuery() {
+        Password pw1 = new Password();
+        Password pw2 = new Password();
+        Password pw3 = new Password();
+        pm.addPasswordLog(pw1, "Microsoft");
+        pm.addPasswordLog(pw2, "Apple ID");
+        pm.addPasswordLog(pw3, "Amazon");
+
+        List<PasswordLog> searched = pm.searchPasswords("ApPle id  ");
+        assertEquals(1, searched.size());
+        assertEquals(searched.get(0).getTitle(), "Apple ID");
+    }
+
+    @Test
+    public void searchPasswordsNoneFound() {
+        Password pw1 = new Password();
+        Password pw2 = new Password();
+        Password pw3 = new Password();
+        pm.addPasswordLog(pw1, "Microsoft");
+        pm.addPasswordLog(pw2, "Apple ID");
+        pm.addPasswordLog(pw3, "Amazon");
+
+        List<PasswordLog> searched = pm.searchPasswords("Google");
+        assertEquals(0, searched.size());
+    }
 }
