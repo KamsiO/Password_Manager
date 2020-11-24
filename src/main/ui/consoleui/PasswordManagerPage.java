@@ -1,7 +1,9 @@
 package ui.consoleui;
 
+import exceptions.PasswordLogDoesNotExistException;
 import model.Password;
 import model.PasswordLog;
+import model.SortOrder;
 
 import java.util.List;
 
@@ -71,10 +73,10 @@ public class PasswordManagerPage {
     // EFFECTS: tracks user input if the user has saved passwords
     private static boolean handlePMContainsCommand(String answer) {
         if (answer.equals("1")) {
-            printPasswords(passwordManager.viewPasswordsSorted("alphabetical"));
+            printPasswords(passwordManager.viewPasswordsSorted(SortOrder.ALPHABETICAL));
             return true;
         } else if (answer.equals("2")) {
-            printPasswords(passwordManager.viewPasswordsSorted("reverse"));
+            printPasswords(passwordManager.viewPasswordsSorted(SortOrder.REVERSE));
             return true;
         } else if (answer.equals("3")) {
             getPasswordLog();
@@ -106,7 +108,11 @@ public class PasswordManagerPage {
             boolean added = passwordManager.addPasswordLog(pw, title);
             if (added) {
                 System.out.println("Password successfully saved under \"" + title + "\"!");
-                PasswordApp.savePasswordManager("add", passwordManager.getPasswordLog(title), "", "");
+                try {
+                    PasswordApp.savePasswordManager("add", passwordManager.getPasswordLog(title), "", "");
+                } catch (PasswordLogDoesNotExistException e) {
+                    e.printStackTrace();
+                }
                 savingPassword = false;
             } else {
                 System.out.println("A password log with name \""
@@ -156,12 +162,12 @@ public class PasswordManagerPage {
         boolean deletingPassword = true;
         while (deletingPassword) {
             String title = stringInput.next();
-            if (passwordManager.viewPasswords().contains(title)) {
+            try {
                 PasswordApp.savePasswordManager("delete", passwordManager.getPasswordLog(title), "", "");
                 passwordManager.deletePasswordLog(title);
                 System.out.println("Password saved under under \"" + title + "\" has successfully been deleted.");
                 deletingPassword = false;
-            } else {
+            } catch (PasswordLogDoesNotExistException e) {
                 System.out.println("A password log with name \""
                         + title + "\" does not exist. Please input another name.");
             }
@@ -175,11 +181,12 @@ public class PasswordManagerPage {
         boolean viewingPassword = true;
         while (viewingPassword) {
             String title = stringInput.next();
-            if (passwordManager.viewPasswords().contains(title)) {
-                PasswordLog pl = passwordManager.getPasswordLog(title);
+            PasswordLog pl = null;
+            try {
+                pl = passwordManager.getPasswordLog(title);
                 viewingPassword = false;
                 PasswordLogPage.viewPasswordLog(pl);
-            } else {
+            } catch (PasswordLogDoesNotExistException e) {
                 System.out.println("A password log with name \""
                         + title + "\" does not exist. Please input another name.");
             }

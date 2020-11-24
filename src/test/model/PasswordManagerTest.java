@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.PasswordLogDoesNotExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,13 +62,31 @@ public class PasswordManagerTest {
     }
 
     @Test
-    public void testDeletePasswordLog() {
+    public void testDeletePasswordLogNoExceptionThrown() {
         Password pw = new Password();
         pm.addPasswordLog(pw, "Snapchat");
 
-        pm.deletePasswordLog("Snapchat");
+        try {
+            pm.deletePasswordLog("Snapchat");
+            assertEquals(0, pm.getPasswordLogs().size());
+        } catch (PasswordLogDoesNotExistException e) {
+            fail("A password log with that title should exist");
+        }
+    }
 
-        assertEquals(0, pm.getPasswordLogs().size());
+    @Test
+    public void testDeletePasswordLogExceptionThrown() {
+        Password pw = new Password();
+        pm.addPasswordLog(pw, "Snapchat");
+
+        try {
+            pm.deletePasswordLog("Instagram");
+            fail("Exception should have been thrown");
+        } catch (PasswordLogDoesNotExistException e) {
+            //expected
+        }
+
+        assertEquals(1, pm.getPasswordLogs().size());
     }
 
     @Test
@@ -77,10 +96,39 @@ public class PasswordManagerTest {
         pm.addPasswordLog(pw1, "Snapchat");
         pm.addPasswordLog(pw2, "Snapchat 2");
 
-        pm.deletePasswordLog("Snapchat");
+        try {
+            pm.deletePasswordLog("Snapchat");
+        } catch (PasswordLogDoesNotExistException e) {
+            fail("A password log with that title should exist");
+        }
 
         assertEquals(1, pm.getPasswordLogs().size());
         assertEquals("Snapchat 2", pm.viewPasswords().get(0));
+    }
+
+    @Test
+    public void testGetPasswordLogNoExceptionThrown() {
+        Password pw = new Password();
+        pm.addPasswordLog(pw, "Instagram");
+
+        try {
+            pm.deletePasswordLog("Instagram");
+        } catch (PasswordLogDoesNotExistException e) {
+            fail("A password log with that title should exist");
+        }
+    }
+
+    @Test
+    public void testGetPasswordLogExceptionThrown() {
+        Password pw = new Password();
+        pm.addPasswordLog(pw, "Instagram");
+
+        try {
+            pm.getPasswordLog("instagram");
+            fail("Exception should have been thrown");
+        } catch (PasswordLogDoesNotExistException e) {
+            //expected
+        }
     }
 
     @Test
@@ -90,7 +138,12 @@ public class PasswordManagerTest {
         pm.addPasswordLog(pw1, "Insta");
         pm.addPasswordLog(pw2, "insta");
 
-        PasswordLog pl = pm.getPasswordLog("Insta");
+        PasswordLog pl = null;
+        try {
+            pl = pm.getPasswordLog("Insta");
+        } catch (PasswordLogDoesNotExistException e) {
+            fail("A password log with that title should exist");
+        }
 
         assertEquals("Insta", pl.getTitle());
     }
@@ -104,7 +157,7 @@ public class PasswordManagerTest {
         pm.addPasswordLog(pw2, "Apple ID");
         pm.addPasswordLog(pw3, "Amazon");
 
-        List<String> passwords = pm.viewPasswordsSorted("alphabetical");
+        List<String> passwords = pm.viewPasswordsSorted(SortOrder.ALPHABETICAL);
 
         assertEquals("Amazon", passwords.get(0));
         assertEquals("Apple ID", passwords.get(1));
@@ -120,7 +173,7 @@ public class PasswordManagerTest {
         pm.addPasswordLog(pw2, "Apple ID");
         pm.addPasswordLog(pw3, "Amazon");
 
-        List<String> passwords = pm.viewPasswordsSorted("reverse");
+        List<String> passwords = pm.viewPasswordsSorted(SortOrder.REVERSE);
 
         assertEquals("Microsoft", passwords.get(0));
         assertEquals("Apple ID", passwords.get(1));

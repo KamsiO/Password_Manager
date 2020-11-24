@@ -1,6 +1,7 @@
 package ui.gui;
 
 import exceptions.ObjectNotFoundException;
+import exceptions.PasswordLogDoesNotExistException;
 import model.PasswordLog;
 import model.PasswordManager;
 import persistence.JsonReader;
@@ -104,7 +105,15 @@ public class PasswordManagerPage extends JPanel {
     // EFFECTS: deletes password log log
     public void deleteLog(PasswordLogContainer log) {
         savePasswordManager("delete", log.getLog(), "", "");
-        pm.deletePasswordLog(log.getLog().getTitle());
+        try {
+            pm.deletePasswordLog(log.getLog().getTitle());
+        } catch (PasswordLogDoesNotExistException e) {
+            JOptionPane.showConfirmDialog(null,
+                    "A password log with that title does not exist",
+                    "Warning!",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+        }
         passwordContainer.remove(log);
         repaint();
     }
@@ -176,10 +185,16 @@ public class PasswordManagerPage extends JPanel {
     private void displayLogs() {
         JPanel logDisplayArea = makeLogDisplayArea();
         scrollable = new JScrollPane(logDisplayArea);
+        setupScrollPane();
+        mainPage.add(scrollable);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets the look and behaviour of scroll pane
+    private void setupScrollPane() {
         scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
-        mainPage.add(scrollable);
     }
 
     // MODIFIES: this
@@ -336,9 +351,7 @@ public class PasswordManagerPage extends JPanel {
         mainPage.remove(scrollable);
 
         scrollable = new JScrollPane(panel);
-        scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
+        setupScrollPane();
         mainPage.add(scrollable);
 
         searched = true;
@@ -355,9 +368,7 @@ public class PasswordManagerPage extends JPanel {
         mainPage.remove(scrollable);
         initializeLogs();
         scrollable = new JScrollPane(makeLogDisplayArea());
-        scrollable.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollable.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 0)));
+        setupScrollPane();
         mainPage.add(scrollable);
 
         searched = false;

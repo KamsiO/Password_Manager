@@ -35,7 +35,7 @@ public class JsonReaderTest extends JsonTest { //based off of JsonSerializationD
     }
 
     @Test
-    void testReaderGeneralWorkRoom() {
+    void testReaderGeneralPasswordManager() {
         JsonReader reader = new JsonReader("./data/testReaderGeneralPasswordManager.json");
         try {
             PasswordManager pm = reader.read();

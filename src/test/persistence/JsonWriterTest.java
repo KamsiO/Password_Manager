@@ -133,7 +133,6 @@ class JsonWriterTest extends JsonTest {
             JsonWriter writer = new JsonWriter("./data/testWriterGeneralPasswordManager.json");
             restoreToInitial();
             pm = reader.read();
-            //pm.addPasswordLog(pl, "gmail");
 
             //method call
             writer.open();
@@ -146,6 +145,8 @@ class JsonWriterTest extends JsonTest {
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
+        } catch (ObjectNotFoundException e) {
+            fail("Object should be there");
         }
     }
 
@@ -185,6 +186,8 @@ class JsonWriterTest extends JsonTest {
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
+        } catch (ObjectNotFoundException e) {
+            fail("Object should be there");
         }
     }
 
