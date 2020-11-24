@@ -50,3 +50,7 @@ alphabetically
 - As a user, I want the option to load saved passwords
 - As a user, I want the option to save changes to a password I edit
 - As a user, I want to be able to search through my saved passwords
+
+#### Phase 4: Task 2
+PasswordManager was made robust. getPasswordLog and deletePasswordLog now both throw a checked exception. 
+Additionally, viewPasswordsSorted now uses an enumeration for the sort order instead of requiring a specific string input.
