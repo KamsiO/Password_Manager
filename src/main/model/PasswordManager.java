@@ -151,7 +151,7 @@ public class PasswordManager implements Writable {
     // MODIFIES: this
     // EFFECTS: if the object to delete is not found, throws ObjectNotFoundException
     //          otherwise deletes the json object that represents the given password log
-    public JSONObject deleteLogFromJson(PasswordLog pl) {
+    public JSONObject deleteLogFromJson(PasswordLog pl) throws ObjectNotFoundException {
         if (json == null) {
             json = toJson();
         }
@@ -176,7 +176,7 @@ public class PasswordManager implements Writable {
     // MODIFIES: this
     // EFFECTS: if the object to update is not found, throws ObjectNotFoundException
     //          otherwise, updates the key value in the json file for the json object that represents given password log
-    public JSONObject updateLogInJson(PasswordLog pl, String info, String value) {
+    public JSONObject updateLogInJson(PasswordLog pl, String info, String value) throws ObjectNotFoundException {
         if (json == null) {
             json = toJson();
         }
@@ -217,5 +217,4 @@ public class PasswordManager implements Writable {
 
         return jsonArray;
     }
-
 }

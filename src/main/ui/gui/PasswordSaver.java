@@ -36,6 +36,7 @@ public class PasswordSaver implements ActionListener {
             pl = new PasswordLog(new Password(password), title);
             PasswordApp.switchTab(MANAGER_INDEX);
             passwordManager.closeLog();
+            passwordManager.clearSearch();
             passwordManager.addLog(pl);
         }
     }

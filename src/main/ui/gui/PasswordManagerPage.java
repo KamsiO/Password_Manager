@@ -114,7 +114,12 @@ public class PasswordManagerPage extends JPanel {
                     JOptionPane.DEFAULT_OPTION,
                     JOptionPane.WARNING_MESSAGE);
         }
-        passwordContainer.remove(log);
+        if (searched) {
+            searchedPasswordContainer.remove(log);
+            search();
+        } else {
+            passwordContainer.remove(log);
+        }
         repaint();
     }
 
@@ -147,9 +152,17 @@ public class PasswordManagerPage extends JPanel {
             jsonWriter.write(pm, function, pl, info, value);
             jsonWriter.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Unable to write to file: " + JSON_STORE);
+            JOptionPane.showConfirmDialog(null,
+                    "Unable to write to file: " + JSON_STORE,
+                    "Error",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE);
         } catch (ObjectNotFoundException e) {
-            System.out.println("Unable to save changes.");
+            JOptionPane.showConfirmDialog(null,
+                    "Unable to save changes.",
+                    "Error",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -364,7 +377,7 @@ public class PasswordManagerPage extends JPanel {
 
     // MODIFIES: this
     // EFFECTS: clears the search by setting the search button, search bar, and displayed logs back to normal
-    private void clearSearch() {
+    public void clearSearch() {
         mainPage.remove(scrollable);
         initializeLogs();
         scrollable = new JScrollPane(makeLogDisplayArea());

@@ -98,10 +98,10 @@ public class PasswordApp { // ui inspired from TellerApp
 
     // MODIFIES: PasswordManager
     // EFFECTS: saves the password manager to file
-    public static void savePasswordManager(String function, PasswordLog pl, String info, String value) {
+    public static void savePasswordManager(String operation, PasswordLog pl, String info, String value) {
         try {
             jsonWriter.open();
-            jsonWriter.write(passwordManager, function, pl, info, value);
+            jsonWriter.write(passwordManager, operation, pl, info, value);
             jsonWriter.close();
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);
