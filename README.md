@@ -54,3 +54,10 @@ alphabetically
 #### Phase 4: Task 2
 PasswordManager was made robust. getPasswordLog and deletePasswordLog now both throw a checked exception. 
 Additionally, viewPasswordsSorted now uses an enumeration for the sort order instead of requiring a specific string input.
+
+#### Phase 4: Task 3
+I'm happy to see that my UML design diagram does not have too much medium level coupling. I noticed that PasswordLogPage
+is associated with PasswordLog, but I could remove this association because PasswordLogPage is also associated with
+PasswordLogContainer which in turn is associated with PasswordLog. To reduce semantic coupling, I would create an enumeration
+for the operation parameter in the write() method in JsonWriter. Right now, it requires that the caller passes a correctly formatted 
+string which could lead to bugs down the line.

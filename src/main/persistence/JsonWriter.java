@@ -27,12 +27,12 @@ public class JsonWriter { //largely based off of JsonSerializationDemo
         writer = new PrintWriter(new File(destination));
     }
 
-    // REQUIRES: function is one of "add", "delete", "update"
+    // REQUIRES: operation is one of "add", "delete", "update"
     // MODIFIES: this, PasswordManager
     // EFFECTS: writes JSON representation of password manager to file
-    public void write(PasswordManager pm, String function, PasswordLog pl, String info, String value) {
+    public void write(PasswordManager pm, String operation, PasswordLog pl, String info, String value) {
         JSONObject json;
-        switch (function) {
+        switch (operation) {
             case "add":
                 json = pm.addLogToJson(pl);
                 break;
