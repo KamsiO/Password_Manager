@@ -9,9 +9,9 @@
 
 ## Setup
 - Clone repository and open in preffered IDE
-- Navigate to the ui package
-- Run Main within the gui package for the gui app
-- Run Main within the consoleui package for the console ui app
+- Navigate to the "ui" package
+- Run Main within the "gui" package for the GUI app
+- Run Main within the "consoleui" package for the console UI app
 - Enjoy!
 
 ## Features
