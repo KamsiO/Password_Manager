@@ -34,11 +34,12 @@ public class PasswordLogContainer extends JPanel {
     }
 
     // MODIFIES: this
-    // EFFECTS: updates the title and password to the title and password of given password log log
+    // EFFECTS: updates the title and password to the title and password of given password log
     public void updateLog(PasswordLog log) {
         this.log = log;
         title.setText(log.getTitle());
-        passwordLabel.setText(log.getPassword().getPassword());
+        password = log.getPassword().getPassword();
+        passwordLabel.setText(password);
         repaint();
     }
 
