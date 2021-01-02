@@ -30,7 +30,7 @@
 - search through saved passwords
 
 ## Who is this for?
-*Anyone!* Anyone who uses the internet has probably had to create a password protected account at some point, and this
+Anyone who uses the internet has probably had to create a password protected account at some point, and this
 application can help with that. It can simply be used as a place to keep track of all your passwords, or it can help 
 create new passwords.
 
