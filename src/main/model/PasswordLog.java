@@ -33,10 +33,15 @@ public class PasswordLog implements Writable {
         this.notes = notes;
     }
 
+   public String encrypt() {
+        return password.encrypt();
+    }
+
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("password", password.getPassword());
+        String encrypted = encrypt();
+        json.put("password", encrypted);
         json.put("title", title);
         json.put("username", username);
         json.put("url", url);
