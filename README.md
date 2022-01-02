@@ -28,6 +28,7 @@
 - add new password entry
 - delete password entry
 - search through saved passwords
+- passwords are saved in encyrpted JSON file
 
 ## Who is this for?
 Anyone who uses the internet has probably had to create a password protected account at some point, and this
