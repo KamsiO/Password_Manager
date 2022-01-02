@@ -63,6 +63,7 @@ public class JsonReader { //largely based off of JsonSerializationDemo
     // EFFECTS: parses password log from JSON object and adds it to password manager
     private void addLog(PasswordManager pm, JSONObject jsonObject) {
         Password pw = new Password(jsonObject.getString("password"));
+        pw.decrypt();
         String title = jsonObject.getString("title");
         String url = jsonObject.getString("url");
         String user = jsonObject.getString("username");
