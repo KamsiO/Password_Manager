@@ -115,6 +115,20 @@ class PasswordTest {
         assertTrue(strength.get(3)); //digit
         assertFalse(strength.get(4)); //special char
     }
+    
+    @Test
+    public void testEncrypt() {
+        pw.setPassword("Good123!");
+        String encrypted = pw.encrypt();
+        assertEquals("33 25 05 05 86 08 97 401", encrypted);
+    }
+
+    @Test
+    public void testDecrypt() {
+        pw.setPassword("33 25 05 05 86 08 97 401");
+        pw.decrypt();
+        assertEquals("Good123!", pw.getPassword());
+    }
 
     @Test
     public void testSetPasswordStrengthRatingPoor() {
