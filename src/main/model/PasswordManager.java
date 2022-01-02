@@ -193,6 +193,9 @@ public class PasswordManager implements Writable {
             throw new ObjectNotFoundException();
         }
         toUpdate.remove(info);
+        if (info == "password") {
+            value = pl.encrypt();
+        }
         toUpdate.put(info, value);
 
         return json;
